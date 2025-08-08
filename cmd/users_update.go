@@ -53,13 +53,15 @@ options you want to change.`,
 		}
 
 		defaults := settings.UserDefaults{
-			Scope:       user.Scope,
-			Locale:      user.Locale,
-			ViewMode:    user.ViewMode,
-			SingleClick: user.SingleClick,
-			Perm:        user.Perm,
-			Sorting:     user.Sorting,
-			Commands:    user.Commands,
+			Scope:        user.Scope,
+			Locale:       user.Locale,
+			ViewMode:     user.ViewMode,
+			SingleClick:  user.SingleClick,
+			DateFormat:   user.DateFormat,
+			HideDotfiles: user.HideDotfiles,
+			Perm:         user.Perm,
+			Sorting:      user.Sorting,
+			Commands:     user.Commands,
 		}
 		err = getUserDefaults(flags, &defaults, false)
 		if err != nil {
@@ -69,18 +71,12 @@ options you want to change.`,
 		user.Locale = defaults.Locale
 		user.ViewMode = defaults.ViewMode
 		user.SingleClick = defaults.SingleClick
+		user.DateFormat = defaults.DateFormat
+		user.HideDotfiles = defaults.HideDotfiles
 		user.Perm = defaults.Perm
 		user.Commands = defaults.Commands
 		user.Sorting = defaults.Sorting
 		user.LockPassword, err = getBool(flags, "lockPassword")
-		if err != nil {
-			return err
-		}
-		user.DateFormat, err = getBool(flags, "dateFormat")
-		if err != nil {
-			return err
-		}
-		user.HideDotfiles, err = getBool(flags, "hideDotfiles")
 		if err != nil {
 			return err
 		}
