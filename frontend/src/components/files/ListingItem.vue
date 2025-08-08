@@ -17,6 +17,7 @@
     @touchmove="handleTouchMove"
     :data-dir="isDir"
     :data-type="type"
+    :data-index="index"
     :aria-label="name"
     :aria-selected="isSelected"
     :data-ext="getExtension(name).toLowerCase()"
@@ -59,9 +60,9 @@ const touches = ref<number>(0);
 
 const longPressTimer = ref<number | null>(null);
 const longPressTriggered = ref<boolean>(false);
-const longPressDelay = ref<number>(500);
+const longPressDelay = ref<number>(600); // Increased delay for better UX
 const startPosition = ref<{ x: number; y: number } | null>(null);
-const moveThreshold = ref<number>(10);
+const moveThreshold = ref<number>(15); // Increased threshold
 
 const $showError = inject<IToastError>("$showError")!;
 const router = useRouter();
@@ -225,6 +226,8 @@ const itemClick = (event: Event | KeyboardEvent) => {
   // If long press was triggered, prevent normal click behavior
   if (longPressTriggered.value) {
     longPressTriggered.value = false;
+    event.preventDefault();
+    event.stopPropagation();
     return;
   }
 
@@ -318,8 +321,17 @@ const cancelLongPress = () => {
 };
 
 const handleLongPress = () => {
-  if (singleClick.value) {
+  if (singleClick.value && !longPressTriggered.value) {
     longPressTriggered.value = true;
+    // Add visual feedback for long press
+    const element = document.querySelector(`[data-index="${props.index}"]`) as HTMLElement;
+    if (element) {
+      element.style.transform = 'scale(0.95)';
+      element.style.transition = 'transform 0.1s';
+      setTimeout(() => {
+        element.style.transform = '';
+      }, 150);
+    }
     click(new Event("longpress"));
   }
   cancelLongPress();
@@ -337,6 +349,8 @@ const checkMovement = (clientX: number, clientY: number): boolean => {
 // Event handlers
 const handleMouseDown = (event: MouseEvent) => {
   if (event.button === 0) {
+    // Reset any previous long press state
+    longPressTriggered.value = false;
     startLongPress(event.clientX, event.clientY);
   }
 };
@@ -352,6 +366,8 @@ const handleMouseLeave = () => {
 const handleTouchStart = (event: TouchEvent) => {
   if (event.touches.length === 1) {
     const touch = event.touches[0];
+    // Reset any previous long press state
+    longPressTriggered.value = false;
     startLongPress(touch.clientX, touch.clientY);
   }
 };

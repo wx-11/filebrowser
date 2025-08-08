@@ -1,7 +1,6 @@
 package http
 
 import (
-	"bufio"
 	"context"
 	"io"
 	"log"
