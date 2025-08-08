@@ -102,14 +102,18 @@ jobs:
           username: ${{ vars.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Set release variables
+        run: |
+          echo "RELEASE_TAG=my-$(date +%Y%m%d)-${{ github.run_number }}" >> $GITHUB_ENV
+          echo "RELEASE_NAME=My Branch Build $(date +%Y-%m-%d)" >> $GITHUB_ENV
+          echo "BUILD_DATE=$(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_ENV
+          echo "VERSION=my-$(date +%Y%m%d)-${GITHUB_SHA:0:7}" >> $GITHUB_ENV
+
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
         run: |
-          # Create a unique tag for this build
-          VERSION="my-$(date +%Y%m%d)-${GITHUB_SHA:0:7}"
-          
           # Build cross-platform binaries
           platforms=("linux/amd64" "linux/arm64" "darwin/amd64" "darwin/arm64" "windows/amd64")
           
@@ -141,8 +145,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: my-$(date +%Y%m%d)-${{ github.run_number }}
-          name: "My Branch Build $(date +%Y-%m-%d)"
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: ${{ env.RELEASE_NAME }}
           body: |
             # File Browser My Branch - Automated Build
             
@@ -168,7 +172,7 @@ jobs:
             ## 🔨 Build Information
             - **Commit**: ${{ github.sha }}
             - **Branch**: my
-            - **Build Date**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            - **Build Date**: ${{ env.BUILD_DATE }}
             - **Workflow Run**: ${{ github.run_number }}
           files: |
             dist/*.tar.gz
@@ -180,7 +184,6 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          VERSION="my-$(date +%Y%m%d)-${GITHUB_SHA:0:7}"
           
           # Create optimized Dockerfile for production
           cat > Dockerfile.production << 'EOF'
