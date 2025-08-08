@@ -75,7 +75,7 @@
         <action icon="info" :label="t('buttons.info')" show="info" />
         <action
           icon="check_circle"
-          :label="t('buttons.selectMultiple')"
+          :label="fileStore.multiple ? t('buttons.cancelMultiple') : t('buttons.selectMultiple')"
           @action="toggleMultipleSelection"
         />
       </template>

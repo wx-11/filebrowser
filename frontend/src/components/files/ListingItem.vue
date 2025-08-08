@@ -360,10 +360,16 @@ const handleMouseDown = (event: MouseEvent) => {
 
 const handleMouseUp = () => {
   cancelLongPress();
+  // 延迟重置长按标志，允许后续的点击事件正常处理
+  setTimeout(() => {
+    longPressTriggered.value = false;
+  }, 50);
 };
 
 const handleMouseLeave = () => {
   cancelLongPress();
+  // 重置长按标志
+  longPressTriggered.value = false;
 };
 
 const handleTouchStart = (event: TouchEvent) => {
@@ -375,10 +381,16 @@ const handleTouchStart = (event: TouchEvent) => {
 
 const handleTouchEnd = () => {
   cancelLongPress();
+  // 延迟重置长按标志，允许后续的点击事件正常处理
+  setTimeout(() => {
+    longPressTriggered.value = false;
+  }, 50);
 };
 
 const handleTouchCancel = () => {
   cancelLongPress();
+  // 重置长按标志
+  longPressTriggered.value = false;
 };
 
 const handleTouchMove = (event: TouchEvent) => {
