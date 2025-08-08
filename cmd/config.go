@@ -218,6 +218,8 @@ func printSettings(ser *settings.Server, set *settings.Settings, auther auth.Aut
 	fmt.Fprintf(w, "\tLocale:\t%s\n", set.Defaults.Locale)
 	fmt.Fprintf(w, "\tView mode:\t%s\n", set.Defaults.ViewMode)
 	fmt.Fprintf(w, "\tSingle Click:\t%t\n", set.Defaults.SingleClick)
+	fmt.Fprintf(w, "\tDate Format:\t%t\n", set.Defaults.DateFormat)
+	fmt.Fprintf(w, "\tHide Dotfiles:\t%t\n", set.Defaults.HideDotfiles)
 	fmt.Fprintf(w, "\tFile Creation Mode:\t%O\n", set.FileMode)
 	fmt.Fprintf(w, "\tDirectory Creation Mode:\t%O\n", set.DirMode)
 	fmt.Fprintf(w, "\tCommands:\t%s\n", strings.Join(set.Defaults.Commands, " "))
