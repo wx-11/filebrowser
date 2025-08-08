@@ -32,6 +32,16 @@
                 <i class="material-icons">content_paste</i>
               </button>
             </td>
+            <td class="small" v-if="hasDownloadLink(link)">
+              <button
+                class="action copy-clipboard"
+                :aria-label="$t('buttons.copyDownloadLinkToClipboard')"
+                :title="$t('buttons.copyDownloadLinkToClipboard')"
+                @click="copyToClipboard(buildDownloadLink(link))"
+              >
+                <i class="material-icons">content_paste_go</i>
+              </button>
+            </td>
             <td class="small">
               <button
                 class="action"
@@ -132,7 +142,7 @@
 <script>
 import { mapActions, mapState } from "pinia";
 import { useFileStore } from "@/stores/file";
-import { share as api } from "@/api";
+import { share as api, pub as pubApi } from "@/api";
 import dayjs from "dayjs";
 import { useLayoutStore } from "@/stores/layout";
 import { copy } from "@/utils/clipboard";
@@ -246,6 +256,15 @@ export default {
     },
     buildLink(share) {
       return api.getShareURL(share);
+    },
+    hasDownloadLink(link) {
+      // Only show direct download link for single files without password protection
+      const isSingleFile = this.selectedCount === 1 && !this.req.items[this.selected[0]].isDir;
+      const hasNoPassword = !link.password_hash || link.password_hash === "";
+      return isSingleFile && hasNoPassword;
+    },
+    buildDownloadLink(share) {
+      return pubApi.getDownloadURL(share);
     },
     sort() {
       this.links = this.links.sort((a, b) => {
