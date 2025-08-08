@@ -279,7 +279,7 @@ var types = map[string]string{
 	".mjpg":      "video/x-motion-jpeg",
 	".mm":        "application/base64",
 	".mme":       "application/base64",
-	".mod":       "audio/mod",
+	".mod":       ContentTextHeaderValue,
 	".moov":      "video/quicktime",
 	".mov":       "video/quicktime",
 	".movie":     "video/x-sgi-movie",

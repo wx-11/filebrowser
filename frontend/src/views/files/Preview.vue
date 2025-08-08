@@ -439,5 +439,14 @@ const close = () => {
   router.push({ path: uri });
 };
 
-const download = () => window.open(downloadUrl.value);
+const download = () => {
+  // Create a temporary anchor element to trigger download
+  const link = document.createElement('a');
+  link.href = downloadUrl.value;
+  link.download = name.value || 'download';
+  link.style.display = 'none';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 </script>
