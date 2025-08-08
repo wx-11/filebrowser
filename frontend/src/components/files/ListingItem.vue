@@ -326,7 +326,14 @@ const cancelLongPress = () => {
 const handleLongPress = () => {
   if (singleClick.value) {
     longPressTriggered.value = true;
-    click(new Event("longpress"));
+    // 长按选中逻辑：如果未选中则添加到选中列表，如果已选中则保持选中状态
+    if (!isSelected.value) {
+      if (!fileStore.multiple) {
+        fileStore.selected = [];
+      }
+      fileStore.selected.push(props.index);
+    }
+    // 长按时不执行普通的click逻辑，避免取消选中
   }
   cancelLongPress();
 };
