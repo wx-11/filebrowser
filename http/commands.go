@@ -5,9 +5,11 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"os/exec"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -119,6 +121,28 @@ var commandsHandler = withUser(func(w http.ResponseWriter, r *http.Request, d *d
 	
 	cmd := exec.CommandContext(ctx, command[0], command[1:]...) //nolint:gosec
 	cmd.Dir = d.user.FullPath(r.URL.Path)
+	
+	// Inherit filebrowser's execution environment and permissions
+	// This ensures commands run with the same privileges as the filebrowser process
+	// Get current process environment to inherit all variables including USER, HOME, etc.
+	cmd.Env = append([]string{}, 
+		"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+		"SHELL=/bin/bash",
+		"TERM=xterm-256color",
+	)
+	
+	// Inherit current process environment variables for proper privilege execution
+	for _, env := range []string{"USER", "HOME", "LOGNAME", "PWD"} {
+		if val := os.Getenv(env); val != "" {
+			cmd.Env = append(cmd.Env, env+"="+val)
+		}
+	}
+	
+	// Enable process group for better process management
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Setpgid: true,
+		Pgid:    0,
+	}
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
