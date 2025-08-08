@@ -10,6 +10,7 @@ export const useFileStore = defineStore("file", {
     multiple: boolean;
     isFiles: boolean;
     preselect: string | null;
+    scrollPosition: { [path: string]: number };
   } => ({
     req: null,
     oldReq: null,
@@ -18,6 +19,7 @@ export const useFileStore = defineStore("file", {
     multiple: false,
     isFiles: false,
     preselect: null,
+    scrollPosition: {},
   }),
   getters: {
     selectedCount: (state) => state.selected.length,
@@ -56,6 +58,26 @@ export const useFileStore = defineStore("file", {
       const i = this.selected.indexOf(value);
       if (i === -1) return;
       this.selected.splice(i, 1);
+    },
+    // 保存当前路径的滚动位置
+    saveScrollPosition(path: string) {
+      this.scrollPosition[path] = window.scrollY;
+    },
+    // 恢复指定路径的滚动位置
+    restoreScrollPosition(path: string) {
+      const position = this.scrollPosition[path];
+      if (position !== undefined) {
+        // 使用 nextTick 确保 DOM 已更新
+        setTimeout(() => {
+          window.scrollTo(0, position);
+        }, 0);
+        return true;
+      }
+      return false;
+    },
+    // 清除指定路径的滚动位置记录
+    clearScrollPosition(path: string) {
+      delete this.scrollPosition[path];
     },
     // easily reset state using `$reset`
     clearFile() {

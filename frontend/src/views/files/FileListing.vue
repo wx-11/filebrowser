@@ -428,10 +428,16 @@ watch(req, () => {
     // How much every listing item affects the window height
     setItemWeight();
 
-    // Scroll to the item opened previously
-    if (!revealPreviousItem()) {
-      // Fill and fit the window with listing items
-      fillWindow(true);
+    // 先尝试恢复保存的滚动位置
+    const currentPath = fileStore.req?.path || route.path;
+    const scrollRestored = fileStore.restoreScrollPosition(currentPath);
+
+    if (!scrollRestored) {
+      // Scroll to the item opened previously
+      if (!revealPreviousItem()) {
+        // Fill and fit the window with listing items
+        fillWindow(true);
+      }
     }
   });
 });
@@ -443,10 +449,16 @@ onMounted(() => {
   // How much every listing item affects the window height
   setItemWeight();
 
-  // Scroll to the item opened previously
-  if (!revealPreviousItem()) {
-    // Fill and fit the window with listing items
-    fillWindow(true);
+  // 先尝试恢复保存的滚动位置
+  const currentPath = fileStore.req?.path || route.path;
+  const scrollRestored = fileStore.restoreScrollPosition(currentPath);
+
+  if (!scrollRestored) {
+    // Scroll to the item opened previously
+    if (!revealPreviousItem()) {
+      // Fill and fit the window with listing items
+      fillWindow(true);
+    }
   }
 
   // Add the needed event listeners to the window and document.
@@ -462,6 +474,10 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  // 在组件卸载前保存当前滚动位置
+  const currentPath = fileStore.req?.path || route.path;
+  fileStore.saveScrollPosition(currentPath);
+
   // Remove event listeners before destroying this page.
   window.removeEventListener("keydown", keyEvent);
   window.removeEventListener("scroll", scrollEvent);

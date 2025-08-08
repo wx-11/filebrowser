@@ -54,7 +54,7 @@ import dayjs from "dayjs";
 import { files as api } from "@/api";
 import * as upload from "@/utils/upload";
 import { computed, inject, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const touches = ref<number>(0);
 
@@ -65,6 +65,7 @@ const startPosition = ref<{ x: number; y: number } | null>(null);
 const moveThreshold = ref<number>(10);
 
 const $showError = inject<IToastError>("$showError")!;
+const route = useRoute();
 const router = useRouter();
 
 const props = defineProps<{
@@ -291,6 +292,10 @@ const click = (event: Event | KeyboardEvent) => {
 };
 
 const open = () => {
+  // 在打开文件/目录前保存当前滚动位置
+  const currentPath = fileStore.req?.path || route.path;
+  fileStore.saveScrollPosition(currentPath);
+  
   router.push({ path: props.url });
 };
 

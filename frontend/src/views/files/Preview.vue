@@ -312,9 +312,12 @@ const deleteFile = () => {
   layoutStore.showHover({
     prompt: "delete",
     confirm: () => {
-      if (listing.value === null) {
+      if (listing.value === null || !fileStore.req) {
         return;
       }
+
+      // 清除被删除文件的滚动位置记录
+      fileStore.clearScrollPosition(fileStore.req.path);
 
       const index = listing.value.findIndex((item) => item.name == name.value);
       listing.value.splice(index, 1);
@@ -431,6 +434,8 @@ const toggleNavigation = throttle(function () {
 
 const close = () => {
   const uri = url.removeLastDir(route.path) + "/";
+  // 在路由跳转前标记需要恢复滚动位置
+  fileStore.preselect = fileStore.req?.path || null;
   router.push({ path: uri });
 };
 
