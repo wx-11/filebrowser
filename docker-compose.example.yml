@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  filebrowser:
+    image: ${DOCKER_USERNAME:-your-username}/filebrowser:latest
+    container_name: filebrowser-my
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      # Mount your data directory
+      - /path/to/your/data:/srv
+      # Mount configuration directory (optional)
+      - ./filebrowser-config:/config  
+      # Mount database directory (optional)
+      - ./filebrowser-db:/database
+    environment:
+      # You can set environment variables here
+      - FB_DATABASE=/database/filebrowser.db
+      - FB_CONFIG=/config/config.json
+      - FB_ROOT=/srv
+      - FB_PORT=8080
+      - FB_ADDRESS=0.0.0.0
+    # Optional: Add labels for Traefik or other reverse proxies
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.filebrowser.rule=Host(`files.yourdomain.com`)"
+      - "traefik.http.routers.filebrowser.tls=true"
+      - "traefik.http.services.filebrowser.loadbalancer.server.port=8080"
+
+# Optional: Create named volumes instead of bind mounts  
+volumes:
+  filebrowser-config:
+  filebrowser-db:
+  
+# If you want to use named volumes, replace the volume mounts above with:
+# volumes:
+#   - your-data-volume:/srv  
+#   - filebrowser-config:/config
+#   - filebrowser-db:/database

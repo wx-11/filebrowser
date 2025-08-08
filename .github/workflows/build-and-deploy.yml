@@ -1,0 +1,329 @@
+name: Build and Deploy My Branch
+
+on:
+  push:
+    branches: [ my ]
+  workflow_dispatch:
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: filebrowser
+
+jobs:
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'frontend/package.json'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Install frontend dependencies
+        working-directory: ./frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: pnpm run build
+
+      - name: Upload frontend artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 1
+
+  build-backend:
+    name: Build Backend
+    needs: build-frontend
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: linux
+            arch: amd64
+            goos: linux
+            goarch: amd64
+          - os: linux
+            arch: arm64
+            goos: linux
+            goarch: arm64
+          - os: darwin
+            arch: amd64
+            goos: darwin
+            goarch: amd64
+          - os: darwin
+            arch: arm64
+            goos: darwin
+            goarch: arm64
+          - os: windows
+            arch: amd64
+            goos: windows
+            goarch: amd64
+          - os: windows
+            arch: arm64
+            goos: windows
+            goarch: arm64
+          - os: freebsd
+            arch: amd64
+            goos: freebsd
+            goarch: amd64
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.22'
+
+      - name: Download frontend artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+
+      - name: Generate embedded assets
+        run: |
+          # Ensure the frontend assets are embedded in the Go binary
+          # This step may need to be customized based on your embedding method
+          if [ -f "generate.go" ]; then
+            go generate ./...
+          fi
+
+      - name: Build binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          # Set binary name with extension for Windows
+          BINARY_NAME="filebrowser"
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            BINARY_NAME="${BINARY_NAME}.exe"
+          fi
+          
+          # Build with version info
+          VERSION=${GITHUB_SHA:0:7}
+          LDFLAGS="-s -w -X 'github.com/filebrowser/filebrowser/v2/version.Version=${VERSION}'"
+          
+          go build -ldflags "${LDFLAGS}" -o "${BINARY_NAME}" .
+          
+          # Create archive
+          ARCHIVE_NAME="filebrowser-${{ matrix.os }}-${{ matrix.arch}}"
+          if [ "${{ matrix.goos }}" = "windows" ]; then
+            zip "${ARCHIVE_NAME}.zip" "${BINARY_NAME}"
+          else
+            tar -czf "${ARCHIVE_NAME}.tar.gz" "${BINARY_NAME}"
+          fi
+
+      - name: Upload binary artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.os }}-${{ matrix.arch }}
+          path: |
+            *.tar.gz
+            *.zip
+          retention-days: 1
+
+  create-release:
+    name: Create GitHub Release
+    needs: build-backend
+    runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.create_release.outputs.id }}
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          VERSION=${GITHUB_SHA:0:7}
+          cat > release_notes.md << EOF
+          # File Browser My Branch Build - ${VERSION}
+          
+          This is an automated build from the \`my\` branch containing the following features:
+          
+          ## ✨ Features
+          - 🚀 **Performance Optimizations**: Faster command execution with enhanced WebSocket handling
+          - 📝 **Text Selection Fix**: Fixed Shell interface text selection and copying
+          - 🔗 **Direct Download Links**: Restored direct download functionality for shared files
+          - ⚙️ **CLI Enhancements**: Added missing CLI flags for user management
+          - 🛡️ **Command Permissions**: Fixed restrictive command whitelist issues
+          
+          ## 📦 Downloads
+          Choose the appropriate binary for your platform:
+          
+          ## 🐳 Docker
+          \`\`\`bash
+          docker pull ${{ vars.DOCKER_USERNAME }}/filebrowser:${VERSION}
+          docker pull ${{ vars.DOCKER_USERNAME }}/filebrowser:latest
+          \`\`\`
+          
+          ## 🔨 Build Info
+          - **Commit**: ${GITHUB_SHA}
+          - **Branch**: my
+          - **Build Date**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          EOF
+          
+          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: my-${{ steps.release_notes.outputs.VERSION }}
+          release_name: "My Branch Build ${{ steps.release_notes.outputs.VERSION }}"
+          body_path: ./release_notes.md
+          draft: false
+          prerelease: true
+
+      - name: Upload release assets
+        run: |
+          for file in ./artifacts/binary-*/*; do
+            if [[ -f "$file" ]]; then
+              filename=$(basename "$file")
+              echo "Uploading $filename..."
+              curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+                   -H "Content-Type: application/octet-stream" \
+                   --data-binary "@$file" \
+                   "${{ steps.create_release.outputs.upload_url }}?name=$filename"
+            fi
+          done
+
+  build-docker:
+    name: Build and Push Docker Image
+    needs: [build-backend, create-release]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Linux AMD64 binary
+        uses: actions/download-artifact@v4
+        with:
+          name: binary-linux-amd64
+          path: ./docker-build
+
+      - name: Extract binary
+        run: |
+          cd docker-build
+          tar -xzf *.tar.gz
+          chmod +x filebrowser
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Create Dockerfile
+        run: |
+          cat > docker-build/Dockerfile << 'EOF'
+          FROM alpine:latest
+          
+          # Install ca-certificates for HTTPS support
+          RUN apk --no-cache add ca-certificates tzdata && \
+              adduser -D -s /bin/sh filebrowser
+          
+          WORKDIR /
+          
+          # Copy the binary
+          COPY filebrowser /usr/local/bin/filebrowser
+          
+          # Create necessary directories
+          RUN mkdir -p /srv /config /database && \
+              chown -R filebrowser:filebrowser /srv /config /database
+          
+          USER filebrowser
+          
+          VOLUME ["/srv", "/config", "/database"]
+          
+          EXPOSE 8080
+          
+          ENTRYPOINT ["/usr/local/bin/filebrowser"]
+          EOF
+
+      - name: Build and push Docker image
+        run: |
+          VERSION=${GITHUB_SHA:0:7}
+          
+          cd docker-build
+          
+          # Build for linux/amd64 first (since we have the binary)
+          docker buildx build \
+            --platform linux/amd64 \
+            --tag ${{ vars.DOCKER_USERNAME }}/filebrowser:${VERSION} \
+            --tag ${{ vars.DOCKER_USERNAME }}/filebrowser:latest \
+            --tag ${{ vars.DOCKER_USERNAME }}/filebrowser:my \
+            --push .
+
+      - name: Update Docker Hub description
+        run: |
+          cat > docker-description.md << 'EOF'
+          # File Browser - My Branch
+          
+          Enhanced File Browser with performance optimizations and feature improvements.
+          
+          ## Features
+          - 🚀 Optimized command execution performance  
+          - 📝 Fixed Shell text selection and copying
+          - 🔗 Direct download links for shared files
+          - ⚙️ Enhanced CLI with additional flags
+          - 🛡️ Improved command permissions
+          
+          ## Quick Start
+          ```bash
+          docker run -d \
+            --name filebrowser \
+            -p 8080:8080 \
+            -v /path/to/data:/srv \
+            -v /path/to/config:/config \
+            -v /path/to/database:/database \
+            ${{ vars.DOCKER_USERNAME }}/filebrowser:latest
+          ```
+          
+          ## Tags
+          - `latest` - Latest my branch build
+          - `my` - My branch specific tag  
+          - `{commit}` - Specific commit builds
+          
+          Built from: https://github.com/${{ github.repository }}/tree/my
+          EOF
+
+  cleanup:
+    name: Cleanup Artifacts
+    needs: [create-release, build-docker]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Delete artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: |
+            frontend-dist
+            binary-*
