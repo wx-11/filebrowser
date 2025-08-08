@@ -10,12 +10,12 @@
       class="shell__divider"
       :style="this.shellDrag ? { background: `${checkTheme()}` } : ''"
     ></div>
-    <div @click="focus" class="shell__content" ref="scrollable">
+    <div @click="handleContentClick" class="shell__content" ref="scrollable">
       <div v-for="(c, index) in content" :key="index" class="shell__result">
         <div class="shell__prompt">
           <i class="material-icons">chevron_right</i>
         </div>
-        <pre class="shell__text" style="user-select: text;">{{ c.text }}</pre>
+        <pre class="shell__text" style="user-select: text;" @click.stop>{{ c.text }}</pre>
       </div>
 
       <div
@@ -130,6 +130,22 @@ export default {
     },
     focus: function () {
       this.$refs.input.focus();
+    },
+    handleContentClick: function (event) {
+      // 如果用户正在选择文本，不要阻止选择
+      const selection = window.getSelection();
+      if (selection && selection.toString().length > 0) {
+        return; // 用户正在选择文本，不要干扰
+      }
+      
+      // 如果点击的是可选择的文本区域，不要自动聚焦
+      if (event.target.classList.contains('shell__text') && 
+          !event.target.hasAttribute('contenteditable')) {
+        return; // 点击的是命令输出文本，允许选择
+      }
+      
+      // 只有在点击空白区域时才聚焦到输入框
+      this.focus();
     },
     historyUp() {
       if (this.historyPos > 0) {
