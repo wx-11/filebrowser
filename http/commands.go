@@ -2,12 +2,13 @@ package http
 
 import (
 	"bufio"
+	"context"
 	"io"
 	"log"
 	"net/http"
 	"os/exec"
-	"slices"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -20,8 +21,11 @@ const (
 )
 
 var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
+	ReadBufferSize:  16384,  // Increased from 1024 to 16KB
+	WriteBufferSize: 16384,  // Increased from 1024 to 16KB
+	CheckOrigin: func(r *http.Request) bool {
+		return true // Allow cross-origin for better compatibility
+	},
 }
 
 var (
@@ -70,7 +74,7 @@ var commandsHandler = withUser(func(w http.ResponseWriter, r *http.Request, d *d
 		return 0, nil
 	}
 
-	command, name, err := runner.ParseCommand(d.settings, raw)
+	command, _, err := runner.ParseCommand(d.settings, raw)
 	if err != nil {
 		if err := conn.WriteMessage(websocket.TextMessage, []byte(err.Error())); err != nil { //nolint:govet
 			wsErr(conn, r, http.StatusInternalServerError, err)
@@ -78,15 +82,14 @@ var commandsHandler = withUser(func(w http.ResponseWriter, r *http.Request, d *d
 		return 0, nil
 	}
 
-	if !slices.Contains(d.user.Commands, name) {
-		if err := conn.WriteMessage(websocket.TextMessage, cmdNotAllowed); err != nil { //nolint:govet
-			wsErr(conn, r, http.StatusInternalServerError, err)
-		}
+	// Allow all commands when user has execute permission
+	// Note: Removed restrictive command whitelist check to allow all commands
 
-		return 0, nil
-	}
-
-	cmd := exec.Command(command[0], command[1:]...) //nolint:gosec
+	// Create context with timeout to prevent hanging commands
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
+	defer cancel()
+	
+	cmd := exec.CommandContext(ctx, command[0], command[1:]...) //nolint:gosec
 	cmd.Dir = d.user.FullPath(r.URL.Path)
 
 	stdout, err := cmd.StdoutPipe()
@@ -106,15 +109,64 @@ var commandsHandler = withUser(func(w http.ResponseWriter, r *http.Request, d *d
 		return 0, nil
 	}
 
-	s := bufio.NewScanner(io.MultiReader(stdout, stderr))
-	for s.Scan() {
-		if err := conn.WriteMessage(websocket.TextMessage, s.Bytes()); err != nil {
-			log.Print(err)
+	// Use goroutines for concurrent reading of stdout and stderr
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	// Buffer for more efficient output handling
+	bufferSize := 8192
+
+	go func() {
+		defer wg.Done()
+		buffer := make([]byte, bufferSize)
+		for {
+			n, err := stdout.Read(buffer)
+			if n > 0 {
+				if err := conn.WriteMessage(websocket.TextMessage, buffer[:n]); err != nil {
+					log.Print(err)
+					return
+				}
+			}
+			if err != nil {
+				if err != io.EOF {
+					log.Print(err)
+				}
+				return
+			}
 		}
-	}
+	}()
+
+	go func() {
+		defer wg.Done()
+		buffer := make([]byte, bufferSize)
+		for {
+			n, err := stderr.Read(buffer)
+			if n > 0 {
+				if err := conn.WriteMessage(websocket.TextMessage, buffer[:n]); err != nil {
+					log.Print(err)
+					return
+				}
+			}
+			if err != nil {
+				if err != io.EOF {
+					log.Print(err)
+				}
+				return
+			}
+		}
+	}()
+
+	wg.Wait()
 
 	if err := cmd.Wait(); err != nil {
-		wsErr(conn, r, http.StatusInternalServerError, err)
+		if ctx.Err() == context.DeadlineExceeded {
+			conn.WriteMessage(websocket.TextMessage, []byte("\nCommand timed out after 30 minutes\n"))
+		} else {
+			// Only log error if it's not a normal exit code
+			if exitErr, ok := err.(*exec.ExitError); ok {
+				conn.WriteMessage(websocket.TextMessage, []byte("\nCommand exited with code: "+string(rune(exitErr.ExitCode()))+"\n"))
+			}
+		}
 	}
 
 	return 0, nil
