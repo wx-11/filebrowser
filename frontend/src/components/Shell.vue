@@ -15,7 +15,7 @@
         <div class="shell__prompt">
           <i class="material-icons">chevron_right</i>
         </div>
-        <pre class="shell__text">{{ c.text }}</pre>
+        <pre class="shell__text" style="user-select: text;">{{ c.text }}</pre>
       </div>
 
       <div
@@ -121,7 +121,12 @@ export default {
       }
     }, 32),
     scroll: function () {
-      this.$refs.scrollable.scrollTop = this.$refs.scrollable.scrollHeight;
+      // Use requestAnimationFrame for smoother scrolling
+      requestAnimationFrame(() => {
+        if (this.$refs.scrollable) {
+          this.$refs.scrollable.scrollTop = this.$refs.scrollable.scrollHeight;
+        }
+      });
     },
     focus: function () {
       this.$refs.input.focus();
@@ -175,12 +180,12 @@ export default {
         this.path,
         cmd,
         (event) => {
-          results.text += `${event.data}\n`;
+          // Directly append data without adding extra newline each time
+          results.text += event.data;
           this.scroll();
         },
         () => {
           results.text = results.text
-
             .replace(/\u001b\[[0-9;]+m/g, "") // Filter ANSI color for now
             .trimEnd();
           this.canInput = true;
