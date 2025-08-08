@@ -1,0 +1,283 @@
+name: My Branch CI/CD
+
+on:
+  push:
+    branches:
+      - "my"
+    tags:
+      - "my-v*"
+  pull_request:
+    branches:
+      - "my"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  packages: write
+  actions: write
+
+jobs:
+  # Linters
+  lint-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: "frontend/package.json"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "pnpm"
+          cache-dependency-path: "frontend/pnpm-lock.yaml"
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: pnpm install --frozen-lockfile
+      - name: Lint frontend
+        working-directory: ./frontend
+        run: pnpm run lint
+
+  lint-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'  # Use available version
+      - name: Lint backend
+        run: |
+          if command -v golangci-lint >/dev/null 2>&1; then
+            golangci-lint run
+          else
+            go fmt ./...
+            go vet ./...
+          fi
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: [lint-frontend, lint-backend]
+    steps:
+      - run: echo "Linting completed successfully"
+
+  # Tests
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: "frontend/package.json"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "pnpm"
+          cache-dependency-path: "frontend/pnpm-lock.yaml"
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: pnpm install --frozen-lockfile
+      - name: Type check
+        working-directory: ./frontend
+        run: pnpm run typecheck
+      - name: Test frontend
+        working-directory: ./frontend
+        run: |
+          if grep -q '"test"' package.json; then
+            pnpm test
+          else
+            echo "No frontend tests configured"
+          fi
+
+  test-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Test backend
+        run: |
+          if ls *_test.go >/dev/null 2>&1 || find . -name "*_test.go" | grep -q .; then
+            go test -v ./...
+          else
+            echo "No backend tests found"
+          fi
+
+  test:
+    runs-on: ubuntu-latest
+    needs: [test-frontend, test-backend]
+    steps:
+      - run: echo "Testing completed successfully"
+
+  # Build and Release
+  release:
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/my'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - uses: pnpm/action-setup@v4
+        with:
+          package_json_file: "frontend/package.json"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+          cache: "pnpm"
+          cache-dependency-path: "frontend/pnpm-lock.yaml"
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm run build
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Create release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+        run: |
+          # Create a unique tag for this build
+          VERSION="my-$(date +%Y%m%d)-${GITHUB_SHA:0:7}"
+          
+          # Build cross-platform binaries
+          platforms=("linux/amd64" "linux/arm64" "darwin/amd64" "darwin/arm64" "windows/amd64")
+          
+          mkdir -p dist
+          
+          for platform in "${platforms[@]}"; do
+            os=$(echo $platform | cut -d'/' -f1)
+            arch=$(echo $platform | cut -d'/' -f2)
+            
+            output="filebrowser"
+            if [ "$os" = "windows" ]; then
+              output="filebrowser.exe"
+            fi
+            
+            echo "Building for $os/$arch..."
+            GOOS=$os GOARCH=$arch CGO_ENABLED=0 go build \
+              -ldflags="-s -w -X 'github.com/filebrowser/filebrowser/v2/version.Version=$VERSION'" \
+              -o "dist/${output}"
+            
+            # Create archive
+            if [ "$os" = "windows" ]; then
+              cd dist && zip "filebrowser-${os}-${arch}.zip" "$output" && cd ..
+            else
+              cd dist && tar -czf "filebrowser-${os}-${arch}.tar.gz" "$output" && cd ..
+            fi
+            rm "dist/$output"
+          done
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: my-$(date +%Y%m%d)-${{ github.run_number }}
+          name: "My Branch Build $(date +%Y-%m-%d)"
+          body: |
+            # File Browser My Branch - Automated Build
+            
+            ## ✨ Features in this build:
+            - 🚀 **Performance Optimizations**: Enhanced WebSocket command execution
+            - 📝 **UI Improvements**: Fixed text selection in Shell interface  
+            - 🔗 **Direct Downloads**: Restored download links in share dialog
+            - ⚙️ **CLI Enhancements**: Additional user management flags
+            - 🛡️ **Permission Fixes**: Resolved command whitelist issues
+            
+            ## 📦 Installation
+            
+            ### Binary Installation
+            1. Download the appropriate binary for your platform
+            2. Extract and run: `./filebrowser --help`
+            
+            ### Docker
+            ```bash
+            docker pull ${{ vars.DOCKER_USERNAME }}/filebrowser:my-latest
+            docker run -p 8080:8080 -v /data:/srv ${{ vars.DOCKER_USERNAME }}/filebrowser:my-latest
+            ```
+            
+            ## 🔨 Build Information
+            - **Commit**: ${{ github.sha }}
+            - **Branch**: my
+            - **Build Date**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+            - **Workflow Run**: ${{ github.run_number }}
+          files: |
+            dist/*.tar.gz
+            dist/*.zip
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        run: |
+          VERSION="my-$(date +%Y%m%d)-${GITHUB_SHA:0:7}"
+          
+          # Create optimized Dockerfile for production
+          cat > Dockerfile.production << 'EOF'
+          FROM alpine:latest
+          
+          RUN apk --no-cache add ca-certificates tzdata && \
+              adduser -D -s /bin/sh filebrowser
+          
+          WORKDIR /
+          
+          # Copy the Linux AMD64 binary
+          COPY filebrowser /usr/local/bin/filebrowser
+          
+          RUN chmod +x /usr/local/bin/filebrowser && \
+              mkdir -p /srv /config /database && \
+              chown -R filebrowser:filebrowser /srv /config /database
+          
+          USER filebrowser
+          
+          VOLUME ["/srv", "/config", "/database"]
+          EXPOSE 8080
+          
+          HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+            CMD ["/usr/local/bin/filebrowser", "health"]
+          
+          ENTRYPOINT ["/usr/local/bin/filebrowser"]
+          EOF
+          
+          # Build binary for Docker (Linux AMD64)
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+            -ldflags="-s -w -X 'github.com/filebrowser/filebrowser/v2/version.Version=$VERSION'" \
+            -o filebrowser .
+          
+          # Build and push Docker image
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            --file Dockerfile.production \
+            --tag ${{ vars.DOCKER_USERNAME }}/filebrowser:$VERSION \
+            --tag ${{ vars.DOCKER_USERNAME }}/filebrowser:my-latest \
+            --tag ${{ vars.DOCKER_USERNAME }}/filebrowser:my \
+            --push .
+
+  # Cleanup
+  cleanup:
+    runs-on: ubuntu-latest
+    needs: [release]
+    if: always()
+    steps:
+      - name: Cleanup
+        run: |
+          echo "Build and deployment completed"
+          echo "Docker images available at: ${{ vars.DOCKER_USERNAME }}/filebrowser:my-latest"

@@ -1,0 +1,22 @@
+# Build the frontend first
+FROM node:18-alpine AS frontend-builder
+WORKDIR /app
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
+RUN npm install -g pnpm && pnpm install --frozen-lockfile
+COPY frontend/ .
+RUN pnpm run build
+
+# Build the backend
+FROM golang:1.24-alpine AS builder
+WORKDIR /app
+COPY . .
+# Copy the built frontend assets
+COPY --from=frontend-builder /app/dist frontend/dist/
+
+# Tidy and build the backend
+RUN go mod tidy && CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o filebrowser .
+
+# Final stage - copy the built binary
+FROM scratch
+COPY --from=builder /app/filebrowser /filebrowser
+ENTRYPOINT ["/filebrowser"]

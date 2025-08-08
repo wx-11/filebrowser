@@ -1,0 +1,8 @@
+2025/08/08 18:00:47 Using database: /cc/filebrowser/filebrowser-repo/frontend/demo.db
+2025/08/08 18:00:47 No config file used
+2025/08/08 18:00:47 Listening on [::]:5009
+2025/08/08 18:00:51 /: 404 127.0.0.1 <nil>
+2025/08/08 18:00:57 Got signal: terminated
+2025/08/08 18:00:57 Stopped serving new connections.
+2025/08/08 18:00:57 Graceful shutdown complete.
+Error: exit on signal: sigterm

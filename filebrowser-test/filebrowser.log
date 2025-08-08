@@ -1,0 +1,7 @@
+2025/08/07 18:26:06 Using database: /cc/filebrowser/filebrowser-repo/filebrowser-test/filebrowser.db
+2025/08/07 18:26:06 No config file used
+2025/08/07 18:26:06 Listening on [::]:5009
+2025/08/07 18:43:25 Got signal: terminated
+2025/08/07 18:43:25 Stopped serving new connections.
+2025/08/07 18:43:25 Graceful shutdown complete.
+Error: exit on signal: sigterm
