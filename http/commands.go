@@ -138,11 +138,8 @@ var commandsHandler = withUser(func(w http.ResponseWriter, r *http.Request, d *d
 		}
 	}
 	
-	// Enable process group for better process management
-	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Setpgid: true,
-		Pgid:    0,
-	}
+	// Enable process group for better process management (Unix-like systems only)
+	setProcAttributes(cmd)
 
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
