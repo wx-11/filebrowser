@@ -63,6 +63,7 @@ const longPressTriggered = ref<boolean>(false);
 const longPressDelay = ref<number>(500);
 const startPosition = ref<{ x: number; y: number } | null>(null);
 const moveThreshold = ref<number>(10);
+const longPressSelected = ref<boolean>(false);
 
 const $showError = inject<IToastError>("$showError")!;
 const route = useRoute();
@@ -255,6 +256,10 @@ const click = (event: Event | KeyboardEvent) => {
   }
 
   if (fileStore.selected.indexOf(props.index) !== -1) {
+    // 如果是刚刚长按选中的文件，在保护期内不取消选中
+    if (longPressSelected.value) {
+      return;
+    }
     fileStore.removeSelected(props.index);
     return;
   }
@@ -332,6 +337,12 @@ const handleLongPress = () => {
         fileStore.selected = [];
       }
       fileStore.selected.push(props.index);
+      // 标记这个文件是通过长按选中的
+      longPressSelected.value = true;
+      // 设置保护期，避免立即被取消选中
+      setTimeout(() => {
+        longPressSelected.value = false;
+      }, 500);
     }
     // 长按后自动开启多选模式，保持逻辑一致性
     if (!fileStore.multiple) {
