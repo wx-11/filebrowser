@@ -132,6 +132,12 @@ func getUserDefaults(flags *pflag.FlagSet, defaults *settings.UserDefaults, all 
 			defaults.Sorting.By, err = getString(flags, flag.Name)
 		case "sorting.asc":
 			defaults.Sorting.Asc, err = getBool(flags, flag.Name)
+		case "dateFormat":
+			defaults.DateFormat, err = getBool(flags, flag.Name)
+		case "hideDotfiles":
+			defaults.HideDotfiles, err = getBool(flags, flag.Name)
+		case "lockPassword":
+			defaults.LockPassword, err = getBool(flags, flag.Name)
 		}
 		if err != nil {
 			visitErr = err
