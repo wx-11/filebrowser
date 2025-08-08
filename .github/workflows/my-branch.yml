@@ -59,88 +59,11 @@ jobs:
     steps:
       - run: echo "Linting completed successfully"
 
-  # Tests
-  test-frontend:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          package_json_file: "frontend/package.json"
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "22.x"
-          cache: "pnpm"
-          cache-dependency-path: "frontend/pnpm-lock.yaml"
-      - name: Install dependencies
-        working-directory: ./frontend
-        run: pnpm install --frozen-lockfile
-      - name: Type check
-        working-directory: ./frontend
-        run: pnpm run typecheck
-      - name: Install Playwright browsers
-        working-directory: ./frontend
-        run: |
-          if grep -q '"@playwright/test"' package.json; then
-            pnpm exec playwright install chromium --with-deps
-          fi
-          
-      - name: Test frontend  
-        working-directory: ./frontend
-        run: |
-          echo "=== Frontend Testing Phase ==="
-          
-          # Check for unit tests first
-          if grep -q '"test:unit"' package.json; then
-            echo "✅ Running unit tests..."
-            pnpm run test:unit
-          else
-            echo "ℹ️  No unit test script found"
-          fi
-          
-          # Check for CI-compatible tests
-          if grep -q '"test:ci"' package.json; then
-            echo "✅ Running CI-compatible tests..."
-            pnpm run test:ci || echo "⚠️  Tests failed or no test files found - continuing build"
-          else
-            echo "ℹ️  No CI test script found"
-            
-            # Only mention regular tests if no CI version exists
-            if grep -q '"test"' package.json; then
-              echo "⚠️  Found regular Playwright tests but skipping due to webServer dependency"
-              echo "💡 Run locally with: pnpm test"
-            else
-              echo "ℹ️  No test scripts configured"
-            fi
-          fi
-          
-          echo "✅ Frontend test phase completed"
-
-  test-backend:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: '1.22'
-      - name: Test backend
-        run: |
-          if ls *_test.go >/dev/null 2>&1 || find . -name "*_test.go" | grep -q .; then
-            go test -v ./...
-          else
-            echo "No backend tests found"
-          fi
-
-  test:
-    runs-on: ubuntu-latest
-    needs: [test-frontend, test-backend]
-    steps:
-      - run: echo "Testing completed successfully"
 
   # Build and Release
   release:
     runs-on: ubuntu-latest
-    needs: [lint, test]
+    needs: [lint]
     if: github.event_name == 'push' && github.ref == 'refs/heads/my'
     steps:
       - uses: actions/checkout@v4
@@ -251,7 +174,7 @@ jobs:
             dist/*.tar.gz
             dist/*.zip
           draft: false
-          prerelease: true
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

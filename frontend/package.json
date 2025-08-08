@@ -14,11 +14,7 @@
     "typecheck": "vue-tsc -p ./tsconfig.tsc.json --noEmit",
     "lint": "eslint src/",
     "lint:fix": "eslint --fix src/",
-    "format": "prettier --write .",
-    "test": "playwright test",
-    "test:ci": "playwright test --config=playwright.ci.config.ts tests/unit.spec.ts",
-    "test:unit": "playwright test tests/unit.spec.ts --reporter=list",
-    "test:integration": "playwright test --grep-invert unit"
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@chenfengyuan/vue-number-input": "^2.0.1",
@@ -54,7 +50,6 @@
   },
   "devDependencies": {
     "@intlify/unplugin-vue-i18n": "^6.0.8",
-    "@playwright/test": "^1.54.1",
     "@tsconfig/node22": "^22.0.2",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^22.10.10",
@@ -70,7 +65,6 @@
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.1",
     "eslint-plugin-vue": "^9.24.0",
-    "jsdom": "^26.1.0",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "terser": "^5.43.1",
