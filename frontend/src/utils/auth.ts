@@ -102,6 +102,9 @@ export function logout() {
   if (noAuth) {
     window.location.reload();
   } else {
-    router.push({ path: "/login" });
+    // Save current path for redirect after login
+    const currentPath = router.currentRoute.value.fullPath;
+    const redirectPath = currentPath !== "/login" ? currentPath : "/files/";
+    router.push({ path: "/login", query: { redirect: redirectPath } });
   }
 }
