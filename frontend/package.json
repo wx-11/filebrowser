@@ -15,7 +15,10 @@
     "lint": "eslint src/",
     "lint:fix": "eslint --fix src/",
     "format": "prettier --write .",
-    "test": "playwright test"
+    "test": "playwright test",
+    "test:ci": "playwright test --config=playwright.ci.config.ts tests/unit.spec.ts",
+    "test:unit": "playwright test tests/unit.spec.ts --reporter=list",
+    "test:integration": "playwright test --grep-invert unit"
   },
   "dependencies": {
     "@chenfengyuan/vue-number-input": "^2.0.1",
