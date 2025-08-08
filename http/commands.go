@@ -31,6 +31,30 @@ var (
 	cmdNotAllowed = []byte("Command not allowed.")
 )
 
+// isCommandAllowed checks if a command is allowed based on the user's command whitelist
+func isCommandAllowed(userCommands []string, commandName string) bool {
+	// If no commands are specified, deny all commands
+	if len(userCommands) == 0 {
+		return false
+	}
+	
+	// Check if "." is in the list (allows all commands)
+	for _, cmd := range userCommands {
+		if cmd == "." {
+			return true
+		}
+	}
+	
+	// Check if the specific command is in the allowed list
+	for _, cmd := range userCommands {
+		if cmd == commandName {
+			return true
+		}
+	}
+	
+	return false
+}
+
 //nolint:unparam
 func wsErr(ws *websocket.Conn, r *http.Request, status int, err error) {
 	txt := http.StatusText(status)
@@ -73,7 +97,7 @@ var commandsHandler = withUser(func(w http.ResponseWriter, r *http.Request, d *d
 		return 0, nil
 	}
 
-	command, _, err := runner.ParseCommand(d.settings, raw)
+	command, commandName, err := runner.ParseCommand(d.settings, raw)
 	if err != nil {
 		if err := conn.WriteMessage(websocket.TextMessage, []byte(err.Error())); err != nil { //nolint:govet
 			wsErr(conn, r, http.StatusInternalServerError, err)
@@ -81,8 +105,13 @@ var commandsHandler = withUser(func(w http.ResponseWriter, r *http.Request, d *d
 		return 0, nil
 	}
 
-	// Allow all commands when user has execute permission
-	// Note: Removed restrictive command whitelist check to allow all commands
+	// Check if command is allowed based on user's command whitelist
+	if !isCommandAllowed(d.user.Commands, commandName) {
+		if err := conn.WriteMessage(websocket.TextMessage, cmdNotAllowed); err != nil { //nolint:govet
+			wsErr(conn, r, http.StatusInternalServerError, err)
+		}
+		return 0, nil
+	}
 
 	// Create context with timeout to prevent hanging commands
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
