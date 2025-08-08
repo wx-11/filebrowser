@@ -333,6 +333,10 @@ const handleLongPress = () => {
       }
       fileStore.selected.push(props.index);
     }
+    // 长按后自动开启多选模式，保持逻辑一致性
+    if (!fileStore.multiple) {
+      fileStore.multiple = true;
+    }
     // 长按时不执行普通的click逻辑，避免取消选中
   }
   cancelLongPress();
