@@ -161,21 +161,22 @@ var commandsHandler = withUser(func(w http.ResponseWriter, r *http.Request, d *d
 		return 0, nil
 	}
 
-	// Use goroutines for concurrent reading of stdout and stderr
+	// Use goroutines for concurrent reading of stdout and stderr with immediate streaming
 	var wg sync.WaitGroup
 	wg.Add(2)
 
-	// Buffer for more efficient output handling
-	bufferSize := 8192
+	// No buffering - immediate byte-by-byte streaming
 
 	go func() {
 		defer wg.Done()
-		buffer := make([]byte, bufferSize)
+		// Single byte read for immediate response without any buffering
+		buffer := make([]byte, 1)
 		for {
 			n, err := stdout.Read(buffer)
 			if n > 0 {
-				if err := conn.WriteMessage(websocket.TextMessage, buffer[:n]); err != nil {
-					log.Print(err)
+				// Write each byte immediately for real-time streaming
+				if writeErr := conn.WriteMessage(websocket.TextMessage, buffer[:n]); writeErr != nil {
+					log.Print(writeErr)
 					return
 				}
 			}
@@ -190,12 +191,14 @@ var commandsHandler = withUser(func(w http.ResponseWriter, r *http.Request, d *d
 
 	go func() {
 		defer wg.Done()
-		buffer := make([]byte, bufferSize)
+		// Single byte read for immediate response without any buffering
+		buffer := make([]byte, 1)
 		for {
 			n, err := stderr.Read(buffer)
 			if n > 0 {
-				if err := conn.WriteMessage(websocket.TextMessage, buffer[:n]); err != nil {
-					log.Print(err)
+				// Write each byte immediately for real-time streaming
+				if writeErr := conn.WriteMessage(websocket.TextMessage, buffer[:n]); writeErr != nil {
+					log.Print(writeErr)
 					return
 				}
 			}
