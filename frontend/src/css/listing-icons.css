@@ -259,10 +259,6 @@
   content: "description" !important;
 }
 
-.file-icons [data-mime-type="text"] i {
-  color: var(--icon-blue) !important;
-}
-
 /* Override for code files */
 .file-icons [data-mime-type="code"] i::before {
   content: "code" !important;
