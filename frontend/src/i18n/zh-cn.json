@@ -182,6 +182,7 @@
     "filenameMimeTypes": "特定文件名 MIME 类型",
     "addMimeType": "添加扩展名 MIME 类型",
     "addFilenameMime": "添加文件名 MIME 类型",
+    "customMimeType": "自定义 MIME 类型",
     "userHomeBasePath": "用户主目录的路径",
     "userScopeGenerationPlaceholder": "自动生成目录范围",
     "createUserHomeDirectory": "创建用户主目录",

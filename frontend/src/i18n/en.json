@@ -182,6 +182,7 @@
     "filenameMimeTypes": "Specific Filename MIME Types",
     "addMimeType": "Add Extension MIME Type",
     "addFilenameMime": "Add Filename MIME Type",
+    "customMimeType": "Custom MIME Type",
     "userHomeBasePath": "Base path for user home directories",
     "userScopeGenerationPlaceholder": "The scope will be auto generated",
     "createUserHomeDirectory": "Create user home directory",

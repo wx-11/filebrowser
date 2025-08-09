@@ -263,6 +263,7 @@
                 type="text" 
                 v-model="settings.mimeTypes![ext]"
                 placeholder="text/plain"
+                list="mimeTypesList"
               />
               <button 
                 type="button" 
@@ -297,6 +298,7 @@
                 type="text" 
                 v-model="settings.filenameMimes![filename]"
                 placeholder="text/plain"
+                list="mimeTypesList"
               />
               <button 
                 type="button" 
@@ -315,6 +317,13 @@
               {{ t("settings.addFilenameMime") }}
             </button>
           </div>
+          
+          <!-- Datalist for MIME type suggestions -->
+          <datalist id="mimeTypesList">
+            <option v-for="mimeType in commonMimeTypes" :key="mimeType.value" :value="mimeType.value">
+              {{ mimeType.label }}
+            </option>
+          </datalist>
         </div>
 
         <div class="card-action">
@@ -358,6 +367,39 @@ const $showSuccess = inject<IToastSuccess>("$showSuccess")!;
 const { t } = useI18n();
 
 const layoutStore = useLayoutStore();
+
+// Common MIME types with Chinese descriptions
+const commonMimeTypes = [
+  { label: '纯文本', value: 'text/plain' },
+  { label: 'HTML网页', value: 'text/html' },
+  { label: 'CSS样式表', value: 'text/css' },
+  { label: 'JavaScript脚本', value: 'text/javascript' },
+  { label: 'JSON数据', value: 'application/json' },
+  { label: 'XML文档', value: 'text/xml' },
+  { label: 'Markdown文档', value: 'text/markdown' },
+  { label: 'YAML配置', value: 'text/yaml' },
+  { label: 'CSV表格', value: 'text/csv' },
+  { label: 'PDF文档', value: 'application/pdf' },
+  { label: 'Word文档', value: 'application/msword' },
+  { label: 'Excel表格', value: 'application/vnd.ms-excel' },
+  { label: 'PowerPoint演示', value: 'application/vnd.ms-powerpoint' },
+  { label: 'ZIP压缩包', value: 'application/zip' },
+  { label: 'RAR压缩包', value: 'application/x-rar-compressed' },
+  { label: '7Z压缩包', value: 'application/x-7z-compressed' },
+  { label: 'TAR归档', value: 'application/x-tar' },
+  { label: 'GZIP压缩', value: 'application/gzip' },
+  { label: 'PNG图片', value: 'image/png' },
+  { label: 'JPEG图片', value: 'image/jpeg' },
+  { label: 'GIF图片', value: 'image/gif' },
+  { label: 'SVG矢量图', value: 'image/svg+xml' },
+  { label: 'MP3音频', value: 'audio/mpeg' },
+  { label: 'WAV音频', value: 'audio/wav' },
+  { label: 'OGG音频', value: 'audio/ogg' },
+  { label: 'MP4视频', value: 'video/mp4' },
+  { label: 'WebM视频', value: 'video/webm' },
+  { label: 'AVI视频', value: 'video/x-msvideo' },
+  { label: '二进制文件', value: 'application/octet-stream' },
+];
 
 const formattedChunkSize = computed({
   get() {
@@ -547,6 +589,14 @@ onMounted(async () => {
       commandObject.value[key] = original.commands[key]!.join("\n");
     }
 
+    // Initialize MIME types if they don't exist
+    if (!newSettings.mimeTypes) {
+      newSettings.mimeTypes = {};
+    }
+    if (!newSettings.filenameMimes) {
+      newSettings.filenameMimes = {};
+    }
+    
     originalSettings.value = original;
     settings.value = newSettings;
     shellValue.value = newSettings.shell.join(" ");
@@ -602,5 +652,20 @@ onBeforeUnmount(() => {
 
 .mime-types-section > .button--small {
   margin-top: 0.5rem;
+}
+
+/* Style for MIME type input with datalist */
+.mime-entry input[list] {
+  position: relative;
+}
+
+/* Better visual feedback for datalist inputs */
+.mime-entry input[list]::-webkit-calendar-picker-indicator {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
+.mime-entry input[list]:hover::-webkit-calendar-picker-indicator {
+  opacity: 1;
 }
 </style>
