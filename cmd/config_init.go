@@ -14,25 +14,16 @@ func init() {
 	addConfigFlags(configInitCmd.Flags())
 }
 
-// getDefaultMimeTypes returns the default MIME types from the mime.go file
+// getDefaultMimeTypes returns empty map - only custom overrides are saved
 func getDefaultMimeTypes() map[string]string {
-	// Get all default MIME types from files/mime.go
-	return files.GetDefaultMimeTypes()
+	// Don't save default MIME types to database, only custom overrides
+	return map[string]string{}
 }
 
-// getDefaultFilenameMimeTypes returns default MIME types for specific filenames
+// getDefaultFilenameMimeTypes returns empty map - only custom overrides are saved
 func getDefaultFilenameMimeTypes() map[string]string {
-	return map[string]string{
-		"go.mod":      "text/plain",
-		"go.sum":      "text/plain", 
-		"package.json": "application/json",
-		"Dockerfile":   "text/plain",
-		"Makefile":     "text/plain",
-		"README":       "text/plain",
-		"LICENSE":      "text/plain",
-		".gitignore":   "text/plain",
-		".env":         "text/plain",
-	}
+	// Don't save default filename MIME types to database, only custom overrides
+	return map[string]string{}
 }
 
 var configInitCmd = &cobra.Command{

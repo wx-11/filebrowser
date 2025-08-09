@@ -250,80 +250,115 @@
           
           <div class="mime-types-section">
             <h4>{{ t("settings.extensionMimeTypes") }}</h4>
-            <div v-for="(mime, ext) in settings.mimeTypes || {}" :key="ext" class="mime-entry">
-              <input 
-                class="input input--small" 
-                type="text" 
-                :value="ext" 
-                @input="updateMimeExtension($event, String(ext), mime)"
-                placeholder=".ext"
-              />
-              <input 
-                class="input input--small" 
-                type="text" 
-                v-model="settings.mimeTypes![ext]"
-                placeholder="text/plain"
-                list="mimeTypesList"
-              />
-              <button 
-                type="button" 
-                class="button button--small button--flat"
-                @click="removeMimeType(String(ext))"
-              >
-                <i class="material-icons">delete</i>
-              </button>
+            <div class="mime-entries-container">
+              <div v-for="(mime, ext, index) in settings.mimeTypes || {}" :key="ext" class="mime-entry">
+                <div class="mime-entry-inputs">
+                  <input 
+                    class="input mime-ext-input" 
+                    type="text" 
+                    :value="ext" 
+                    @change="updateMimeExtension($event, String(ext), mime)"
+                    @keydown.enter.prevent
+                    placeholder=".ext"
+                    spellcheck="false"
+                  />
+                  <div class="mime-type-wrapper">
+                    <select 
+                      v-model="settings.mimeTypes![ext]"
+                      class="input mime-type-select"
+                      @change="saveMimeTypesDebounced"
+                    >
+                      <option value="">{{ t('settings.customMimeType') }}</option>
+                      <option v-for="mimeType in commonMimeTypes" :key="mimeType.value" :value="mimeType.value">
+                        {{ mimeType.label }} ({{ mimeType.value }})
+                      </option>
+                    </select>
+                    <input 
+                      v-if="!commonMimeTypes.find(m => m.value === settings.mimeTypes![ext])"
+                      class="input mime-type-input" 
+                      type="text" 
+                      v-model="settings.mimeTypes![ext]"
+                      @input="saveMimeTypesDebounced"
+                      placeholder="application/octet-stream"
+                      spellcheck="false"
+                    />
+                  </div>
+                </div>
+                <button 
+                  type="button" 
+                  class="button button--icon button--flat mime-delete-btn"
+                  @click="removeMimeType(String(ext))"
+                  :title="t('buttons.delete')"
+                >
+                  <i class="material-icons">clear</i>
+                </button>
+              </div>
             </div>
             <button 
               type="button" 
-              class="button button--small button--flat"
+              class="button button--small button--outlined mime-add-btn"
               @click="addMimeType"
             >
               <i class="material-icons">add</i>
-              {{ t("settings.addMimeType") }}
+              <span>{{ t("settings.addMimeType") }}</span>
             </button>
           </div>
 
           <div class="mime-types-section">
             <h4>{{ t("settings.filenameMimeTypes") }}</h4>
-            <div v-for="(mime, filename) in settings.filenameMimes || {}" :key="filename" class="mime-entry">
-              <input 
-                class="input input--small" 
-                type="text" 
-                :value="filename" 
-                @input="updateFilenameMime($event, String(filename), mime)"
-                placeholder="filename.txt"
-              />
-              <input 
-                class="input input--small" 
-                type="text" 
-                v-model="settings.filenameMimes![filename]"
-                placeholder="text/plain"
-                list="mimeTypesList"
-              />
-              <button 
-                type="button" 
-                class="button button--small button--flat"
-                @click="removeFilenameMime(String(filename))"
-              >
-                <i class="material-icons">delete</i>
-              </button>
+            <div class="mime-entries-container">
+              <div v-for="(mime, filename, index) in settings.filenameMimes || {}" :key="filename" class="mime-entry">
+                <div class="mime-entry-inputs">
+                  <input 
+                    class="input mime-ext-input" 
+                    type="text" 
+                    :value="filename" 
+                    @change="updateFilenameMime($event, String(filename), mime)"
+                    @keydown.enter.prevent
+                    placeholder="README.md"
+                    spellcheck="false"
+                  />
+                  <div class="mime-type-wrapper">
+                    <select 
+                      v-model="settings.filenameMimes![filename]"
+                      class="input mime-type-select"
+                      @change="saveMimeTypesDebounced"
+                    >
+                      <option value="">{{ t('settings.customMimeType') }}</option>
+                      <option v-for="mimeType in commonMimeTypes" :key="mimeType.value" :value="mimeType.value">
+                        {{ mimeType.label }} ({{ mimeType.value }})
+                      </option>
+                    </select>
+                    <input 
+                      v-if="!commonMimeTypes.find(m => m.value === settings.filenameMimes![filename])"
+                      class="input mime-type-input" 
+                      type="text" 
+                      v-model="settings.filenameMimes![filename]"
+                      @input="saveMimeTypesDebounced"
+                      placeholder="application/octet-stream"
+                      spellcheck="false"
+                    />
+                  </div>
+                </div>
+                <button 
+                  type="button" 
+                  class="button button--icon button--flat mime-delete-btn"
+                  @click="removeFilenameMime(String(filename))"
+                  :title="t('buttons.delete')"
+                >
+                  <i class="material-icons">clear</i>
+                </button>
+              </div>
             </div>
             <button 
               type="button" 
-              class="button button--small button--flat"
+              class="button button--small button--outlined mime-add-btn"
               @click="addFilenameMime"
             >
               <i class="material-icons">add</i>
-              {{ t("settings.addFilenameMime") }}
+              <span>{{ t("settings.addFilenameMime") }}</span>
             </button>
           </div>
-          
-          <!-- Datalist for MIME type suggestions -->
-          <datalist id="mimeTypesList">
-            <option v-for="mimeType in commonMimeTypes" :key="mimeType.value" :value="mimeType.value">
-              {{ mimeType.label }}
-            </option>
-          </datalist>
         </div>
 
         <div class="card-action">
@@ -522,12 +557,13 @@ const addMimeType = () => {
   if (!settings.value.mimeTypes) {
     settings.value.mimeTypes = {};
   }
-  const newExt = '.newext';
+  // Add empty entry that user can fill
+  const newExt = '';
   let counter = 1;
-  let ext = newExt;
+  let ext = `.ext${counter}`;
   while (settings.value.mimeTypes[ext]) {
-    ext = `${newExt}${counter}`;
     counter++;
+    ext = `.ext${counter}`;
   }
   settings.value.mimeTypes[ext] = 'text/plain';
 };
@@ -539,11 +575,14 @@ const removeMimeType = (ext: string) => {
 
 const updateMimeExtension = (event: Event, oldExt: string, mime: string) => {
   const target = event.target as HTMLInputElement;
-  const newExt = target.value;
+  const newExt = target.value.trim();
   if (!settings.value?.mimeTypes || newExt === oldExt) return;
   
+  // Ensure extension starts with a dot
+  const normalizedExt = newExt.startsWith('.') ? newExt : `.${newExt}`;
+  
   delete settings.value.mimeTypes[oldExt];
-  settings.value.mimeTypes[newExt] = mime;
+  settings.value.mimeTypes[normalizedExt] = mime;
 };
 
 const addFilenameMime = () => {
@@ -551,12 +590,12 @@ const addFilenameMime = () => {
   if (!settings.value.filenameMimes) {
     settings.value.filenameMimes = {};
   }
-  const newFilename = 'filename.txt';
+  // Add empty entry that user can fill
   let counter = 1;
-  let filename = newFilename;
+  let filename = `file${counter}.txt`;
   while (settings.value.filenameMimes[filename]) {
-    filename = `${newFilename}${counter}`;
     counter++;
+    filename = `file${counter}.txt`;
   }
   settings.value.filenameMimes[filename] = 'text/plain';
 };
@@ -568,11 +607,22 @@ const removeFilenameMime = (filename: string) => {
 
 const updateFilenameMime = (event: Event, oldFilename: string, mime: string) => {
   const target = event.target as HTMLInputElement;
-  const newFilename = target.value;
+  const newFilename = target.value.trim();
   if (!settings.value?.filenameMimes || newFilename === oldFilename) return;
   
   delete settings.value.filenameMimes[oldFilename];
   settings.value.filenameMimes[newFilename] = mime;
+};
+
+// Debounced save function for automatic saving
+let saveTimeout: number | null = null;
+const saveMimeTypesDebounced = () => {
+  if (saveTimeout) {
+    clearTimeout(saveTimeout);
+  }
+  saveTimeout = window.setTimeout(() => {
+    // Auto-save is handled by the form submit
+  }, 500);
 };
 
 // Define Hooks
@@ -619,53 +669,212 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .mime-types-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .mime-types-section h4 {
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   font-size: 0.95rem;
   font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mime-entries-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: var(--background-secondary);
+  border-radius: 6px;
+  min-height: 60px;
+}
+
+.mime-entries-container:empty::before {
+  content: attr(data-empty-text);
+  color: var(--text-tertiary);
+  font-style: italic;
+  padding: 1rem;
+  text-align: center;
+  display: block;
 }
 
 .mime-entry {
   display: flex;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  gap: 0.75rem;
   align-items: center;
+  background: var(--background);
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
-.mime-entry .input--small {
+.mime-entry:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.mime-entry-inputs {
+  display: flex;
+  gap: 0.75rem;
   flex: 1;
-  padding: 0.25rem 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.mime-ext-input {
+  flex: 0 0 180px;
+  padding: 0.5rem 0.75rem;
   font-size: 0.9rem;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
-.mime-entry .button--small {
-  padding: 0.25rem;
-  min-width: auto;
+.mime-ext-input:focus {
+  border-color: var(--primary);
+  background: var(--background);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
 }
 
-.mime-entry .button--small i {
-  font-size: 1.2rem;
-}
-
-.mime-types-section > .button--small {
-  margin-top: 0.5rem;
-}
-
-/* Style for MIME type input with datalist */
-.mime-entry input[list] {
+.mime-type-wrapper {
+  flex: 1;
+  min-width: 300px;
   position: relative;
 }
 
-/* Better visual feedback for datalist inputs */
-.mime-entry input[list]::-webkit-calendar-picker-indicator {
-  opacity: 0.5;
+.mime-type-select {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  padding-right: 2rem;
+  font-size: 0.9rem;
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1.2rem;
 }
 
-.mime-entry input[list]:hover::-webkit-calendar-picker-indicator {
-  opacity: 1;
+.mime-type-select:focus {
+  border-color: var(--primary);
+  background-color: var(--background);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+}
+
+.mime-type-select option {
+  padding: 0.5rem;
+  background: var(--background);
+  color: var(--text);
+}
+
+.mime-type-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.mime-type-input:focus {
+  border-color: var(--primary);
+  background: var(--background);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+}
+
+.mime-delete-btn {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  color: var(--text-tertiary);
+}
+
+.mime-delete-btn:hover {
+  background: var(--danger-light);
+  color: var(--danger);
+  transform: scale(1.1);
+}
+
+.mime-delete-btn i {
+  font-size: 18px;
+}
+
+.mime-add-btn {
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px dashed var(--border-color);
+  background: transparent;
+  color: var(--primary);
+  transition: all 0.2s ease;
+}
+
+.mime-add-btn:hover {
+  border-color: var(--primary);
+  background: rgba(var(--primary-rgb), 0.05);
+  transform: translateY(-1px);
+}
+
+.mime-add-btn i {
+  font-size: 18px;
+}
+
+/* Dark mode specific adjustments */
+.dark .mime-entry {
+  background: var(--background-dark);
+}
+
+.dark .mime-entries-container {
+  background: var(--background-dark-secondary);
+}
+
+.dark .mime-type-select,
+.dark .mime-type-input,
+.dark .mime-ext-input {
+  background: var(--background-dark);
+  border-color: var(--border-dark);
+}
+
+.dark .mime-type-select:focus,
+.dark .mime-type-input:focus,
+.dark .mime-ext-input:focus {
+  background: var(--background-dark-elevated);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mime-entry-inputs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .mime-ext-input {
+    flex: 1;
+  }
+  
+  .mime-type-wrapper {
+    min-width: auto;
+  }
 }
 </style>
