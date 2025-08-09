@@ -148,7 +148,6 @@
               />
             </p>
           </div>
-
         </div>
 
         <div class="card-action">
@@ -247,46 +246,55 @@
 
         <div class="card-content">
           <p class="small">{{ t("settings.mimeTypesHelp") }}</p>
-          
+
           <div class="mime-types-section">
             <h4>{{ t("settings.extensionMimeTypes") }}</h4>
             <div class="mime-entries-container">
-              <div v-for="(mime, ext) in mimeTypes" :key="ext" class="mime-entry">
+              <div
+                v-for="(mime, ext) in mimeTypes"
+                :key="ext"
+                class="mime-entry"
+              >
                 <div class="mime-entry-inputs">
-                  <input 
-                    class="input mime-ext-input" 
-                    type="text" 
-                    :value="ext" 
+                  <input
+                    class="input mime-ext-input"
+                    type="text"
+                    :value="ext"
                     @change="updateMimeExtension($event, String(ext), mime)"
                     @keydown.enter.prevent
                     placeholder=".ext"
                     spellcheck="false"
                   />
                   <div class="mime-type-wrapper">
-                    <select 
+                    <select
                       :value="mime"
                       @change="updateMimeTypeValue(String(ext), $event)"
                       class="input mime-type-select"
                     >
-                      <option value="">{{ t('settings.customMimeType') }}</option>
-                      <option v-for="mimeType in commonMimeTypes" :key="mimeType.value" :value="mimeType.value">
+                      <option value="">
+                        {{ t("settings.customMimeType") }}
+                      </option>
+                      <option
+                        v-for="mimeType in commonMimeTypes"
+                        :key="mimeType.value"
+                        :value="mimeType.value"
+                      >
                         {{ mimeType.label }} ({{ mimeType.value }})
                       </option>
                     </select>
-                    <input 
-                      v-if="!commonMimeTypes.find(m => m.value === mime)"
-                      class="input mime-type-input" 
-                      type="text" 
+                    <input
+                      v-if="!commonMimeTypes.find((m) => m.value === mime)"
+                      class="input mime-type-input"
+                      type="text"
                       :value="mime"
                       @input="updateMimeTypeValue(String(ext), $event)"
-                      @input="saveMimeTypesDebounced"
                       placeholder="application/octet-stream"
                       spellcheck="false"
                     />
                   </div>
                 </div>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   class="button button--icon button--flat mime-delete-btn"
                   @click="removeMimeType(String(ext))"
                   :title="t('buttons.delete')"
@@ -295,8 +303,8 @@
                 </button>
               </div>
             </div>
-            <button 
-              type="button" 
+            <button
+              type="button"
               class="button button--small button--outlined mime-add-btn"
               @click="addMimeType"
             >
@@ -308,42 +316,53 @@
           <div class="mime-types-section">
             <h4>{{ t("settings.filenameMimeTypes") }}</h4>
             <div class="mime-entries-container">
-              <div v-for="(mime, filename) in filenameMimes" :key="filename" class="mime-entry">
+              <div
+                v-for="(mime, filename) in filenameMimes"
+                :key="filename"
+                class="mime-entry"
+              >
                 <div class="mime-entry-inputs">
-                  <input 
-                    class="input mime-ext-input" 
-                    type="text" 
-                    :value="filename" 
+                  <input
+                    class="input mime-ext-input"
+                    type="text"
+                    :value="filename"
                     @change="updateFilenameMime($event, String(filename), mime)"
                     @keydown.enter.prevent
                     placeholder="README.md"
                     spellcheck="false"
                   />
                   <div class="mime-type-wrapper">
-                    <select 
+                    <select
                       :value="mime"
-                      @change="updateFilenameMimeValue(String(filename), $event)"
+                      @change="
+                        updateFilenameMimeValue(String(filename), $event)
+                      "
                       class="input mime-type-select"
                     >
-                      <option value="">{{ t('settings.customMimeType') }}</option>
-                      <option v-for="mimeType in commonMimeTypes" :key="mimeType.value" :value="mimeType.value">
+                      <option value="">
+                        {{ t("settings.customMimeType") }}
+                      </option>
+                      <option
+                        v-for="mimeType in commonMimeTypes"
+                        :key="mimeType.value"
+                        :value="mimeType.value"
+                      >
                         {{ mimeType.label }} ({{ mimeType.value }})
                       </option>
                     </select>
-                    <input 
-                      v-if="!commonMimeTypes.find(m => m.value === mime)"
-                      class="input mime-type-input" 
-                      type="text" 
+                    <input
+                      v-if="!commonMimeTypes.find((m) => m.value === mime)"
+                      class="input mime-type-input"
+                      type="text"
                       :value="mime"
                       @input="updateFilenameMimeValue(String(filename), $event)"
-                      @input="saveMimeTypesDebounced"
                       placeholder="application/octet-stream"
                       spellcheck="false"
                     />
                   </div>
                 </div>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   class="button button--icon button--flat mime-delete-btn"
                   @click="removeFilenameMime(String(filename))"
                   :title="t('buttons.delete')"
@@ -352,8 +371,8 @@
                 </button>
               </div>
             </div>
-            <button 
-              type="button" 
+            <button
+              type="button"
               class="button button--small button--outlined mime-add-btn"
               @click="addFilenameMime"
             >
@@ -411,35 +430,35 @@ const filenameMimes = computed(() => settings.value?.filenameMimes || {});
 
 // Common MIME types with Chinese descriptions
 const commonMimeTypes = [
-  { label: '纯文本', value: 'text/plain' },
-  { label: 'HTML网页', value: 'text/html' },
-  { label: 'CSS样式表', value: 'text/css' },
-  { label: 'JavaScript脚本', value: 'text/javascript' },
-  { label: 'JSON数据', value: 'application/json' },
-  { label: 'XML文档', value: 'text/xml' },
-  { label: 'Markdown文档', value: 'text/markdown' },
-  { label: 'YAML配置', value: 'text/yaml' },
-  { label: 'CSV表格', value: 'text/csv' },
-  { label: 'PDF文档', value: 'application/pdf' },
-  { label: 'Word文档', value: 'application/msword' },
-  { label: 'Excel表格', value: 'application/vnd.ms-excel' },
-  { label: 'PowerPoint演示', value: 'application/vnd.ms-powerpoint' },
-  { label: 'ZIP压缩包', value: 'application/zip' },
-  { label: 'RAR压缩包', value: 'application/x-rar-compressed' },
-  { label: '7Z压缩包', value: 'application/x-7z-compressed' },
-  { label: 'TAR归档', value: 'application/x-tar' },
-  { label: 'GZIP压缩', value: 'application/gzip' },
-  { label: 'PNG图片', value: 'image/png' },
-  { label: 'JPEG图片', value: 'image/jpeg' },
-  { label: 'GIF图片', value: 'image/gif' },
-  { label: 'SVG矢量图', value: 'image/svg+xml' },
-  { label: 'MP3音频', value: 'audio/mpeg' },
-  { label: 'WAV音频', value: 'audio/wav' },
-  { label: 'OGG音频', value: 'audio/ogg' },
-  { label: 'MP4视频', value: 'video/mp4' },
-  { label: 'WebM视频', value: 'video/webm' },
-  { label: 'AVI视频', value: 'video/x-msvideo' },
-  { label: '二进制文件', value: 'application/octet-stream' },
+  { label: "纯文本", value: "text/plain" },
+  { label: "HTML网页", value: "text/html" },
+  { label: "CSS样式表", value: "text/css" },
+  { label: "JavaScript脚本", value: "text/javascript" },
+  { label: "JSON数据", value: "application/json" },
+  { label: "XML文档", value: "text/xml" },
+  { label: "Markdown文档", value: "text/markdown" },
+  { label: "YAML配置", value: "text/yaml" },
+  { label: "CSV表格", value: "text/csv" },
+  { label: "PDF文档", value: "application/pdf" },
+  { label: "Word文档", value: "application/msword" },
+  { label: "Excel表格", value: "application/vnd.ms-excel" },
+  { label: "PowerPoint演示", value: "application/vnd.ms-powerpoint" },
+  { label: "ZIP压缩包", value: "application/zip" },
+  { label: "RAR压缩包", value: "application/x-rar-compressed" },
+  { label: "7Z压缩包", value: "application/x-7z-compressed" },
+  { label: "TAR归档", value: "application/x-tar" },
+  { label: "GZIP压缩", value: "application/gzip" },
+  { label: "PNG图片", value: "image/png" },
+  { label: "JPEG图片", value: "image/jpeg" },
+  { label: "GIF图片", value: "image/gif" },
+  { label: "SVG矢量图", value: "image/svg+xml" },
+  { label: "MP3音频", value: "audio/mpeg" },
+  { label: "WAV音频", value: "audio/wav" },
+  { label: "OGG音频", value: "audio/ogg" },
+  { label: "MP4视频", value: "video/mp4" },
+  { label: "WebM视频", value: "video/webm" },
+  { label: "AVI视频", value: "video/x-msvideo" },
+  { label: "二进制文件", value: "application/octet-stream" },
 ];
 
 const formattedChunkSize = computed({
@@ -570,7 +589,7 @@ const addMimeType = () => {
     counter++;
     ext = `.ext${counter}`;
   }
-  settings.value.mimeTypes[ext] = 'text/plain';
+  settings.value.mimeTypes[ext] = "text/plain";
 };
 
 const removeMimeType = (ext: string) => {
@@ -582,10 +601,10 @@ const updateMimeExtension = (event: Event, oldExt: string, mime: string) => {
   const target = event.target as HTMLInputElement;
   const newExt = target.value.trim();
   if (!settings.value?.mimeTypes || newExt === oldExt) return;
-  
+
   // Ensure extension starts with a dot
-  const normalizedExt = newExt.startsWith('.') ? newExt : `.${newExt}`;
-  
+  const normalizedExt = newExt.startsWith(".") ? newExt : `.${newExt}`;
+
   delete settings.value.mimeTypes[oldExt];
   settings.value.mimeTypes[normalizedExt] = mime;
 };
@@ -602,7 +621,7 @@ const addFilenameMime = () => {
     counter++;
     filename = `file${counter}.txt`;
   }
-  settings.value.filenameMimes[filename] = 'text/plain';
+  settings.value.filenameMimes[filename] = "text/plain";
 };
 
 const removeFilenameMime = (filename: string) => {
@@ -610,11 +629,15 @@ const removeFilenameMime = (filename: string) => {
   delete settings.value.filenameMimes[filename];
 };
 
-const updateFilenameMime = (event: Event, oldFilename: string, mime: string) => {
+const updateFilenameMime = (
+  event: Event,
+  oldFilename: string,
+  mime: string
+) => {
   const target = event.target as HTMLInputElement;
   const newFilename = target.value.trim();
   if (!settings.value?.filenameMimes || newFilename === oldFilename) return;
-  
+
   delete settings.value.filenameMimes[oldFilename];
   settings.value.filenameMimes[newFilename] = mime;
 };
@@ -631,17 +654,6 @@ const updateFilenameMimeValue = (filename: string, event: Event) => {
   if (!settings.value?.filenameMimes) return;
   const target = event.target as HTMLInputElement | HTMLSelectElement;
   settings.value.filenameMimes[filename] = target.value;
-};
-
-// Debounced save function for automatic saving
-let saveTimeout: number | null = null;
-const saveMimeTypesDebounced = () => {
-  if (saveTimeout) {
-    clearTimeout(saveTimeout);
-  }
-  saveTimeout = window.setTimeout(() => {
-    // Auto-save is handled by the form submit
-  }, 500);
 };
 
 // Define Hooks
@@ -665,7 +677,7 @@ onMounted(async () => {
     if (!newSettings.filenameMimes) {
       newSettings.filenameMimes = {};
     }
-    
+
     originalSettings.value = original;
     settings.value = newSettings;
     shellValue.value = newSettings.shell.join(" ");
@@ -746,7 +758,7 @@ onBeforeUnmount(() => {
   flex: 0 0 180px;
   padding: 0.5rem 0.75rem;
   font-size: 0.9rem;
-  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-family: "Monaco", "Menlo", "Courier New", monospace;
   background: var(--background-secondary);
   border: 1px solid var(--border-color);
   border-radius: 4px;
@@ -800,7 +812,7 @@ onBeforeUnmount(() => {
   width: 100%;
   padding: 0.5rem 0.75rem;
   font-size: 0.9rem;
-  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-family: "Monaco", "Menlo", "Courier New", monospace;
   background: var(--background-secondary);
   border: 1px solid var(--border-color);
   border-radius: 4px;
@@ -887,11 +899,11 @@ onBeforeUnmount(() => {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .mime-ext-input {
     flex: 1;
   }
-  
+
   .mime-type-wrapper {
     min-width: auto;
   }

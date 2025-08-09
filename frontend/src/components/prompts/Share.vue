@@ -259,7 +259,8 @@ export default {
     },
     hasDownloadLink(link) {
       // Only show direct download link for single files without password protection
-      const isSingleFile = this.selectedCount === 1 && !this.req.items[this.selected[0]].isDir;
+      const isSingleFile =
+        this.selectedCount === 1 && !this.req.items[this.selected[0]].isDir;
       const hasNoPassword = !link.password_hash || link.password_hash === "";
       return isSingleFile && hasNoPassword;
     },

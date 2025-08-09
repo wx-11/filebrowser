@@ -300,7 +300,7 @@ const open = () => {
   // 在打开文件/目录前保存当前滚动位置
   const currentPath = fileStore.req?.path || route.path;
   fileStore.saveScrollPosition(currentPath);
-  
+
   router.push({ path: props.url });
 };
 
