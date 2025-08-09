@@ -159,19 +159,19 @@
                 class="input input--small" 
                 type="text" 
                 :value="ext" 
-                @input="updateMimeExtension($event, ext, mime)"
+                @input="updateMimeExtension($event, String(ext), mime)"
                 placeholder=".ext"
               />
               <input 
                 class="input input--small" 
                 type="text" 
-                v-model="settings.mimeTypes[ext]"
+                v-model="settings.mimeTypes![ext]"
                 placeholder="text/plain"
               />
               <button 
                 type="button" 
                 class="button button--small button--flat"
-                @click="removeMimeType(ext)"
+                @click="removeMimeType(String(ext))"
               >
                 <i class="material-icons">delete</i>
               </button>
@@ -193,19 +193,19 @@
                 class="input input--small" 
                 type="text" 
                 :value="filename" 
-                @input="updateFilenameMime($event, filename, mime)"
+                @input="updateFilenameMime($event, String(filename), mime)"
                 placeholder="filename.txt"
               />
               <input 
                 class="input input--small" 
                 type="text" 
-                v-model="settings.filenameMimes[filename]"
+                v-model="settings.filenameMimes![filename]"
                 placeholder="text/plain"
               />
               <button 
                 type="button" 
                 class="button button--small button--flat"
-                @click="removeFilenameMime(filename)"
+                @click="removeFilenameMime(String(filename))"
               >
                 <i class="material-icons">delete</i>
               </button>
