@@ -441,10 +441,10 @@ const close = () => {
 
 const download = () => {
   // Create a temporary anchor element to trigger download
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = downloadUrl.value;
-  link.download = name.value || 'download';
-  link.style.display = 'none';
+  link.download = name.value || "download";
+  link.style.display = "none";
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

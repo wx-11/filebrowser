@@ -251,7 +251,7 @@
           <div class="mime-types-section">
             <h4>{{ t("settings.extensionMimeTypes") }}</h4>
             <div class="mime-entries-container">
-              <div v-for="(mime, ext, index) in settings.mimeTypes || {}" :key="ext" class="mime-entry">
+              <div v-for="(mime, ext) in settings.mimeTypes || {}" :key="ext" class="mime-entry">
                 <div class="mime-entry-inputs">
                   <input 
                     class="input mime-ext-input" 
@@ -307,7 +307,7 @@
           <div class="mime-types-section">
             <h4>{{ t("settings.filenameMimeTypes") }}</h4>
             <div class="mime-entries-container">
-              <div v-for="(mime, filename, index) in settings.filenameMimes || {}" :key="filename" class="mime-entry">
+              <div v-for="(mime, filename) in settings.filenameMimes || {}" :key="filename" class="mime-entry">
                 <div class="mime-entry-inputs">
                   <input 
                     class="input mime-ext-input" 
@@ -558,7 +558,6 @@ const addMimeType = () => {
     settings.value.mimeTypes = {};
   }
   // Add empty entry that user can fill
-  const newExt = '';
   let counter = 1;
   let ext = `.ext${counter}`;
   while (settings.value.mimeTypes[ext]) {
