@@ -600,6 +600,26 @@ var types = map[string]string{
 	".epub":      "application/epub+zip",
 }
 
+// GetDefaultMimeTypes returns all default MIME type mappings
+// This is used during initialization to populate the database
+func GetDefaultMimeTypes() map[string]string {
+	// Return a copy of the types map
+	result := make(map[string]string)
+	for ext, typ := range types {
+		result[ext] = typ
+	}
+	// Override some types to be text/plain for better editing experience
+	result[".mod"] = "text/plain"  // go.mod files
+	result[".sum"] = "text/plain"  // go.sum files
+	result[".conf"] = "text/plain"
+	result[".cfg"] = "text/plain"
+	result[".ini"] = "text/plain"
+	result[".log"] = "text/plain"
+	result[".list"] = "text/plain"
+	result[".txt"] = "text/plain"
+	return result
+}
+
 // InitializeMimeTypes registers MIME types from settings
 // This should be called when settings are loaded from database
 func InitializeMimeTypes(customTypes map[string]string) {

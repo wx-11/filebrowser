@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/filebrowser/filebrowser/v2/files"
 	"github.com/filebrowser/filebrowser/v2/settings"
 )
 
@@ -15,40 +16,8 @@ func init() {
 
 // getDefaultMimeTypes returns the default MIME types from the mime.go file
 func getDefaultMimeTypes() map[string]string {
-	// Include commonly used MIME types that should be configurable
-	return map[string]string{
-		".txt":   "text/plain",
-		".md":    "text/markdown",
-		".mod":   "text/plain", // go.mod files
-		".sum":   "text/plain", // go.sum files  
-		".log":   "text/plain",
-		".ini":   "text/plain",
-		".cfg":   "text/plain",
-		".conf":  "text/plain",
-		".yaml":  "text/yaml",
-		".yml":   "text/yaml",
-		".toml":  "text/plain",
-		".json":  "application/json",
-		".xml":   "text/xml",
-		".html":  "text/html",
-		".css":   "text/css",
-		".js":    "text/javascript",
-		".ts":    "text/plain",
-		".tsx":   "text/plain",
-		".jsx":   "text/plain",
-		".vue":   "text/plain",
-		".go":    "text/plain",
-		".py":    "text/plain",
-		".java":  "text/plain",
-		".c":     "text/plain",
-		".cpp":   "text/plain",
-		".h":     "text/plain",
-		".sh":    "text/plain",
-		".bat":   "text/plain",
-		".ps1":   "text/plain",
-		".sql":   "text/plain",
-		".csv":   "text/csv",
-	}
+	// Get all default MIME types from files/mime.go
+	return files.GetDefaultMimeTypes()
 }
 
 // getDefaultFilenameMimeTypes returns default MIME types for specific filenames
