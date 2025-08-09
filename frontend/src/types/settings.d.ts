@@ -9,6 +9,8 @@ interface ISettings {
   tus: SettingsTus;
   shell: string[];
   commands: SettingsCommand;
+  mimeTypes?: { [key: string]: string };
+  filenameMimes?: { [key: string]: string };
 }
 
 interface SettingsDefaults {

@@ -34,6 +34,8 @@ type Settings struct {
 	MinimumPasswordLength uint                `json:"minimumPasswordLength"`
 	FileMode              fs.FileMode         `json:"fileMode"`
 	DirMode               fs.FileMode         `json:"dirMode"`
+	MimeTypes             map[string]string   `json:"mimeTypes"`     // Custom MIME types for extensions
+	FilenameMimeTypes     map[string]string   `json:"filenameMimes"` // Custom MIME types for specific filenames
 }
 
 // GetRules implements rules.Provider.

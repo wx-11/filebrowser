@@ -55,14 +55,16 @@ type FileInfo struct {
 
 // FileOptions are the options when getting a file info.
 type FileOptions struct {
-	Fs         afero.Fs
-	Path       string
-	Modify     bool
-	Expand     bool
-	ReadHeader bool
-	Token      string
-	Checker    rules.Checker
-	Content    bool
+	Fs                afero.Fs
+	Path              string
+	Modify            bool
+	Expand            bool
+	ReadHeader        bool
+	Token             string
+	Checker           rules.Checker
+	Content           bool
+	MimeTypes         map[string]string // Custom MIME types for extensions
+	FilenameMimeTypes map[string]string // Custom MIME types for specific filenames
 }
 
 type ImageResolution struct {
@@ -90,13 +92,13 @@ func NewFileInfo(opts *FileOptions) (*FileInfo, error) {
 
 	if opts.Expand {
 		if file.IsDir {
-			if err := file.readListing(opts.Checker, opts.ReadHeader); err != nil { //nolint:govet
+			if err := file.readListing(opts.Checker, opts.ReadHeader, opts.MimeTypes, opts.FilenameMimeTypes); err != nil { //nolint:govet
 				return nil, err
 			}
 			return file, nil
 		}
 
-		err = file.detectType(opts.Modify, opts.Content, true)
+		err = file.detectType(opts.Modify, opts.Content, true, opts.MimeTypes, opts.FilenameMimeTypes)
 		if err != nil {
 			return nil, err
 		}
@@ -219,7 +221,7 @@ func (i *FileInfo) RealPath() string {
 	return i.Path
 }
 
-func (i *FileInfo) detectType(modify, saveContent, readHeader bool) error {
+func (i *FileInfo) detectType(modify, saveContent, readHeader bool, customMimeTypes, filenameMimeTypes map[string]string) error {
 	if IsNamedPipe(i.Mode) {
 		i.Type = "blob"
 		return nil
@@ -229,7 +231,25 @@ func (i *FileInfo) detectType(modify, saveContent, readHeader bool) error {
 	// of files couldn't be opened: we'd have immediately
 	// a 500 even though it doesn't matter. So we just log it.
 
-	mimetype := mime.TypeByExtension(i.Extension)
+	// First check custom filename-specific MIME types
+	var mimetype string
+	if filenameMimeTypes != nil {
+		if mt, ok := filenameMimeTypes[i.Name]; ok {
+			mimetype = mt
+		}
+	}
+	
+	// Then check custom extension MIME types
+	if mimetype == "" && customMimeTypes != nil {
+		if mt, ok := customMimeTypes[i.Extension]; ok {
+			mimetype = mt
+		}
+	}
+	
+	// Finally fall back to standard MIME type detection
+	if mimetype == "" {
+		mimetype = mime.TypeByExtension(i.Extension)
+	}
 
 	var buffer []byte
 	if readHeader {
@@ -388,7 +408,7 @@ func (i *FileInfo) addSubtitle(fPath string) {
 	i.Subtitles = append(i.Subtitles, fPath)
 }
 
-func (i *FileInfo) readListing(checker rules.Checker, readHeader bool) error {
+func (i *FileInfo) readListing(checker rules.Checker, readHeader bool, customMimeTypes, filenameMimeTypes map[string]string) error {
 	afs := &afero.Afero{Fs: i.Fs}
 	dir, err := afs.ReadDir(i.Path)
 	if err != nil {
@@ -452,7 +472,7 @@ func (i *FileInfo) readListing(checker rules.Checker, readHeader bool) error {
 			if isInvalidLink {
 				file.Type = "invalid_link"
 			} else {
-				err := file.detectType(true, false, readHeader)
+				err := file.detectType(true, false, readHeader, customMimeTypes, filenameMimeTypes)
 				if err != nil {
 					return err
 				}

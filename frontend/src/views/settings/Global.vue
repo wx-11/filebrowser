@@ -148,6 +148,77 @@
               />
             </p>
           </div>
+
+          <h3>{{ t("settings.mimeTypes") }}</h3>
+          <p class="small">{{ t("settings.mimeTypesHelp") }}</p>
+          
+          <div class="mime-types-section">
+            <h4>{{ t("settings.extensionMimeTypes") }}</h4>
+            <div v-for="(mime, ext) in settings.mimeTypes || {}" :key="ext" class="mime-entry">
+              <input 
+                class="input input--small" 
+                type="text" 
+                :value="ext" 
+                @input="updateMimeExtension($event, ext, mime)"
+                placeholder=".ext"
+              />
+              <input 
+                class="input input--small" 
+                type="text" 
+                v-model="settings.mimeTypes[ext]"
+                placeholder="text/plain"
+              />
+              <button 
+                type="button" 
+                class="button button--small button--flat"
+                @click="removeMimeType(ext)"
+              >
+                <i class="material-icons">delete</i>
+              </button>
+            </div>
+            <button 
+              type="button" 
+              class="button button--small button--flat"
+              @click="addMimeType"
+            >
+              <i class="material-icons">add</i>
+              {{ t("settings.addMimeType") }}
+            </button>
+          </div>
+
+          <div class="mime-types-section">
+            <h4>{{ t("settings.filenameMimeTypes") }}</h4>
+            <div v-for="(mime, filename) in settings.filenameMimes || {}" :key="filename" class="mime-entry">
+              <input 
+                class="input input--small" 
+                type="text" 
+                :value="filename" 
+                @input="updateFilenameMime($event, filename, mime)"
+                placeholder="filename.txt"
+              />
+              <input 
+                class="input input--small" 
+                type="text" 
+                v-model="settings.filenameMimes[filename]"
+                placeholder="text/plain"
+              />
+              <button 
+                type="button" 
+                class="button button--small button--flat"
+                @click="removeFilenameMime(filename)"
+              >
+                <i class="material-icons">delete</i>
+              </button>
+            </div>
+            <button 
+              type="button" 
+              class="button button--small button--flat"
+              @click="addFilenameMime"
+            >
+              <i class="material-icons">add</i>
+              {{ t("settings.addFilenameMime") }}
+            </button>
+          </div>
         </div>
 
         <div class="card-action">
@@ -385,6 +456,65 @@ const formatBytes = (bytes: number) => {
   return `${size}${units[unitIndex]}`;
 };
 
+// MIME Type management methods
+const addMimeType = () => {
+  if (!settings.value) return;
+  if (!settings.value.mimeTypes) {
+    settings.value.mimeTypes = {};
+  }
+  const newExt = '.newext';
+  let counter = 1;
+  let ext = newExt;
+  while (settings.value.mimeTypes[ext]) {
+    ext = `${newExt}${counter}`;
+    counter++;
+  }
+  settings.value.mimeTypes[ext] = 'text/plain';
+};
+
+const removeMimeType = (ext: string) => {
+  if (!settings.value?.mimeTypes) return;
+  delete settings.value.mimeTypes[ext];
+};
+
+const updateMimeExtension = (event: Event, oldExt: string, mime: string) => {
+  const target = event.target as HTMLInputElement;
+  const newExt = target.value;
+  if (!settings.value?.mimeTypes || newExt === oldExt) return;
+  
+  delete settings.value.mimeTypes[oldExt];
+  settings.value.mimeTypes[newExt] = mime;
+};
+
+const addFilenameMime = () => {
+  if (!settings.value) return;
+  if (!settings.value.filenameMimes) {
+    settings.value.filenameMimes = {};
+  }
+  const newFilename = 'filename.txt';
+  let counter = 1;
+  let filename = newFilename;
+  while (settings.value.filenameMimes[filename]) {
+    filename = `${newFilename}${counter}`;
+    counter++;
+  }
+  settings.value.filenameMimes[filename] = 'text/plain';
+};
+
+const removeFilenameMime = (filename: string) => {
+  if (!settings.value?.filenameMimes) return;
+  delete settings.value.filenameMimes[filename];
+};
+
+const updateFilenameMime = (event: Event, oldFilename: string, mime: string) => {
+  const target = event.target as HTMLInputElement;
+  const newFilename = target.value;
+  if (!settings.value?.filenameMimes || newFilename === oldFilename) return;
+  
+  delete settings.value.filenameMimes[oldFilename];
+  settings.value.filenameMimes[newFilename] = mime;
+};
+
 // Define Hooks
 
 onMounted(async () => {
@@ -418,3 +548,41 @@ onBeforeUnmount(() => {
   }
 });
 </script>
+
+<style scoped>
+.mime-types-section {
+  margin-bottom: 1.5rem;
+}
+
+.mime-types-section h4 {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.mime-entry {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  align-items: center;
+}
+
+.mime-entry .input--small {
+  flex: 1;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.9rem;
+}
+
+.mime-entry .button--small {
+  padding: 0.25rem;
+  min-width: auto;
+}
+
+.mime-entry .button--small i {
+  font-size: 1.2rem;
+}
+
+.mime-types-section > .button--small {
+  margin-top: 0.5rem;
+}
+</style>
