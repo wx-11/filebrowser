@@ -316,6 +316,7 @@ const getExtension = (fileName: string): string => {
 const getMimeTypeCategory = (fileType: string) => {
   // Return a category based on the type to override CSS icon rules
   // This will be used for data-mime-type attribute
+  // Only return known types that should override default extension-based icons
   if (fileType === "text") return "text";
   if (fileType === "image") return "image";
   if (fileType === "audio") return "audio";
@@ -323,7 +324,8 @@ const getMimeTypeCategory = (fileType: string) => {
   if (fileType === "pdf") return "pdf";
   if (fileType === "archive") return "archive";
   if (fileType === "code") return "code";
-  return fileType;
+  // Return empty string for unknown types so default extension rules apply
+  return "";
 };
 
 // Long-press helper functions

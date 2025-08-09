@@ -50,7 +50,7 @@
 /* #0f0 - Spreadsheet/Database */
 
 .file-icons [data-ext=".csv"] i::before,
-.file-icons [data-ext=".db"]:not([data-mime-type="text"]) i::before,
+.file-icons [data-ext=".db"] i::before,
 .file-icons [data-ext=".odb"] i::before,
 .file-icons [data-ext=".ods"] i::before,
 .file-icons [data-ext=".xls"] i::before,
@@ -253,26 +253,29 @@
 }
 
 /* MIME Type based icon overrides */
+/* These rules have higher specificity and will override extension-based rules */
 /* When a file's MIME type is detected as text, use text icon regardless of extension */
 .file-icons [data-mime-type="text"] i::before {
-  content: "description";
+  content: "description" !important;
 }
 
 .file-icons [data-mime-type="text"] i {
-  color: var(--icon-blue);
+  color: var(--icon-blue) !important;
 }
 
 /* Override for code files */
 .file-icons [data-mime-type="code"] i::before {
-  content: "code";
+  content: "code" !important;
 }
 
 /* Override for PDF files */
 .file-icons [data-mime-type="pdf"] i::before {
-  content: "picture_as_pdf";
+  content: "picture_as_pdf" !important;
 }
 
 /* Override for images */
 .file-icons [data-mime-type="image"] i::before {
-  content: "insert_photo";
+  content: "insert_photo" !important;
 }
+
+/* No need for special empty data-mime-type rules - default extension rules will apply automatically */
