@@ -21,6 +21,7 @@
     :aria-label="name"
     :aria-selected="isSelected"
     :data-ext="getExtension(name).toLowerCase()"
+    :data-mime-type="getMimeTypeCategory(type)"
   >
     <div>
       <img
@@ -310,6 +311,19 @@ const getExtension = (fileName: string): string => {
     return fileName;
   }
   return fileName.substring(lastDotIndex);
+};
+
+const getMimeTypeCategory = (fileType: string) => {
+  // Return a category based on the type to override CSS icon rules
+  // This will be used for data-mime-type attribute
+  if (fileType === "text") return "text";
+  if (fileType === "image") return "image";
+  if (fileType === "audio") return "audio";
+  if (fileType === "video") return "video";
+  if (fileType === "pdf") return "pdf";
+  if (fileType === "archive") return "archive";
+  if (fileType === "code") return "code";
+  return fileType;
 };
 
 // Long-press helper functions

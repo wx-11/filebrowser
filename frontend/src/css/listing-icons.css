@@ -50,7 +50,7 @@
 /* #0f0 - Spreadsheet/Database */
 
 .file-icons [data-ext=".csv"] i::before,
-.file-icons [data-ext=".db"] i::before,
+.file-icons [data-ext=".db"]:not([data-mime-type="text"]) i::before,
 .file-icons [data-ext=".odb"] i::before,
 .file-icons [data-ext=".ods"] i::before,
 .file-icons [data-ext=".xls"] i::before,
@@ -250,4 +250,29 @@
 }
 .file-icons [aria-selected="true"] i {
   color: var(--iconSecondary);
+}
+
+/* MIME Type based icon overrides */
+/* When a file's MIME type is detected as text, use text icon regardless of extension */
+.file-icons [data-mime-type="text"] i::before {
+  content: "description";
+}
+
+.file-icons [data-mime-type="text"] i {
+  color: var(--icon-blue);
+}
+
+/* Override for code files */
+.file-icons [data-mime-type="code"] i::before {
+  content: "code";
+}
+
+/* Override for PDF files */
+.file-icons [data-mime-type="pdf"] i::before {
+  content: "picture_as_pdf";
+}
+
+/* Override for images */
+.file-icons [data-mime-type="image"] i::before {
+  content: "insert_photo";
 }

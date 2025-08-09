@@ -249,7 +249,7 @@
 
           <div class="mime-types-section">
             <h4>{{ t("settings.extensionMimeTypes") }}</h4>
-            <div class="mime-entries-container">
+            <div class="mime-entries-container" v-if="Object.keys(mimeTypes).length > 0">
               <div
                 v-for="(mime, ext) in mimeTypes"
                 :key="ext"
@@ -303,6 +303,10 @@
                 </button>
               </div>
             </div>
+            <div v-else class="mime-empty-state">
+              <i class="material-icons">folder_open</i>
+              <p>{{ t('settings.noCustomMimeTypes', '没有自定义的 MIME 类型') }}</p>
+            </div>
             <button
               type="button"
               class="button button--small button--outlined mime-add-btn"
@@ -315,7 +319,7 @@
 
           <div class="mime-types-section">
             <h4>{{ t("settings.filenameMimeTypes") }}</h4>
-            <div class="mime-entries-container">
+            <div class="mime-entries-container" v-if="Object.keys(filenameMimes).length > 0">
               <div
                 v-for="(mime, filename) in filenameMimes"
                 :key="filename"
@@ -370,6 +374,10 @@
                   <i class="material-icons">clear</i>
                 </button>
               </div>
+            </div>
+            <div v-else class="mime-empty-state">
+              <i class="material-icons">insert_drive_file</i>
+              <p>{{ t('settings.noFilenameMimeTypes', '没有特定文件名的 MIME 类型') }}</p>
             </div>
             <button
               type="button"
@@ -717,19 +725,34 @@ onBeforeUnmount(() => {
   flex-direction: column;
   gap: 0.75rem;
   margin-bottom: 1rem;
-  padding: 0.5rem;
+  padding: 0.75rem;
   background: var(--background-secondary);
-  border-radius: 6px;
-  min-height: 60px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
 }
 
-.mime-entries-container:empty::before {
-  content: attr(data-empty-text);
+.mime-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  margin-bottom: 1rem;
+  background: var(--background-secondary);
+  border-radius: 8px;
+  border: 1px dashed var(--border-color);
   color: var(--text-tertiary);
-  font-style: italic;
-  padding: 1rem;
-  text-align: center;
-  display: block;
+}
+
+.mime-empty-state i {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.5;
+}
+
+.mime-empty-state p {
+  margin: 0;
+  font-size: 0.9rem;
 }
 
 .mime-entry {
@@ -737,13 +760,15 @@ onBeforeUnmount(() => {
   gap: 0.75rem;
   align-items: center;
   background: var(--background);
-  padding: 0.5rem;
-  border-radius: 4px;
+  padding: 0.75rem;
+  border-radius: 6px;
   transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
 
 .mime-entry:hover {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .mime-entry-inputs {
