@@ -259,6 +259,11 @@ func (i *FileInfo) detectType(modify, saveContent, readHeader bool, customMimeTy
 			mimetype = http.DetectContentType(buffer)
 		}
 	}
+	
+	// If still no MIME type detected, default to text/plain for unknown files
+	if mimetype == "" {
+		mimetype = "text/plain"
+	}
 
 	switch {
 	case strings.HasPrefix(mimetype, "video"):

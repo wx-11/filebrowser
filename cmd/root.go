@@ -27,6 +27,7 @@ import (
 	"github.com/filebrowser/filebrowser/v2/auth"
 	"github.com/filebrowser/filebrowser/v2/diskcache"
 	fbErrors "github.com/filebrowser/filebrowser/v2/errors"
+	"github.com/filebrowser/filebrowser/v2/files"
 	"github.com/filebrowser/filebrowser/v2/frontend"
 	fbhttp "github.com/filebrowser/filebrowser/v2/http"
 	"github.com/filebrowser/filebrowser/v2/img"
@@ -152,6 +153,13 @@ user created with the credentials from options "username" and "password".`,
 			return err
 		}
 		setupLog(server.Log)
+		
+		// Initialize MIME types from settings
+		settings, err := d.store.Settings.Get()
+		if err != nil {
+			return err
+		}
+		files.InitializeMimeTypes(settings.MimeTypes)
 
 		root, err := filepath.Abs(server.Root)
 		if err != nil {

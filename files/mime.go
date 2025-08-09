@@ -600,10 +600,19 @@ var types = map[string]string{
 	".epub":      "application/epub+zip",
 }
 
-//nolint:gochecknoinits
-func init() {
+// InitializeMimeTypes registers MIME types from settings
+// This should be called when settings are loaded from database
+func InitializeMimeTypes(customTypes map[string]string) {
+	// First register default types
 	for ext, typ := range types {
 		// skip errors
 		_ = mime.AddExtensionType(ext, typ)
+	}
+	
+	// Then override with custom types from settings
+	if customTypes != nil {
+		for ext, typ := range customTypes {
+			_ = mime.AddExtensionType(ext, typ)
+		}
 	}
 }

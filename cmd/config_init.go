@@ -13,6 +13,59 @@ func init() {
 	addConfigFlags(configInitCmd.Flags())
 }
 
+// getDefaultMimeTypes returns the default MIME types from the mime.go file
+func getDefaultMimeTypes() map[string]string {
+	// Include commonly used MIME types that should be configurable
+	return map[string]string{
+		".txt":   "text/plain",
+		".md":    "text/markdown",
+		".mod":   "text/plain", // go.mod files
+		".sum":   "text/plain", // go.sum files  
+		".log":   "text/plain",
+		".ini":   "text/plain",
+		".cfg":   "text/plain",
+		".conf":  "text/plain",
+		".yaml":  "text/yaml",
+		".yml":   "text/yaml",
+		".toml":  "text/plain",
+		".json":  "application/json",
+		".xml":   "text/xml",
+		".html":  "text/html",
+		".css":   "text/css",
+		".js":    "text/javascript",
+		".ts":    "text/plain",
+		".tsx":   "text/plain",
+		".jsx":   "text/plain",
+		".vue":   "text/plain",
+		".go":    "text/plain",
+		".py":    "text/plain",
+		".java":  "text/plain",
+		".c":     "text/plain",
+		".cpp":   "text/plain",
+		".h":     "text/plain",
+		".sh":    "text/plain",
+		".bat":   "text/plain",
+		".ps1":   "text/plain",
+		".sql":   "text/plain",
+		".csv":   "text/csv",
+	}
+}
+
+// getDefaultFilenameMimeTypes returns default MIME types for specific filenames
+func getDefaultFilenameMimeTypes() map[string]string {
+	return map[string]string{
+		"go.mod":      "text/plain",
+		"go.sum":      "text/plain", 
+		"package.json": "application/json",
+		"Dockerfile":   "text/plain",
+		"Makefile":     "text/plain",
+		"README":       "text/plain",
+		"LICENSE":      "text/plain",
+		".gitignore":   "text/plain",
+		".env":         "text/plain",
+	}
+}
+
 var configInitCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize a new database",
@@ -96,6 +149,8 @@ override the options.`,
 				Theme:                 brandingTheme,
 				Files:                 brandingFiles,
 			},
+			MimeTypes:         getDefaultMimeTypes(),
+			FilenameMimeTypes: getDefaultFilenameMimeTypes(),
 		}
 
 		s.FileMode, err = getMode(flags, "file-mode")

@@ -149,76 +149,6 @@
             </p>
           </div>
 
-          <h3>{{ t("settings.mimeTypes") }}</h3>
-          <p class="small">{{ t("settings.mimeTypesHelp") }}</p>
-          
-          <div class="mime-types-section">
-            <h4>{{ t("settings.extensionMimeTypes") }}</h4>
-            <div v-for="(mime, ext) in settings.mimeTypes || {}" :key="ext" class="mime-entry">
-              <input 
-                class="input input--small" 
-                type="text" 
-                :value="ext" 
-                @input="updateMimeExtension($event, String(ext), mime)"
-                placeholder=".ext"
-              />
-              <input 
-                class="input input--small" 
-                type="text" 
-                v-model="settings.mimeTypes![ext]"
-                placeholder="text/plain"
-              />
-              <button 
-                type="button" 
-                class="button button--small button--flat"
-                @click="removeMimeType(String(ext))"
-              >
-                <i class="material-icons">delete</i>
-              </button>
-            </div>
-            <button 
-              type="button" 
-              class="button button--small button--flat"
-              @click="addMimeType"
-            >
-              <i class="material-icons">add</i>
-              {{ t("settings.addMimeType") }}
-            </button>
-          </div>
-
-          <div class="mime-types-section">
-            <h4>{{ t("settings.filenameMimeTypes") }}</h4>
-            <div v-for="(mime, filename) in settings.filenameMimes || {}" :key="filename" class="mime-entry">
-              <input 
-                class="input input--small" 
-                type="text" 
-                :value="filename" 
-                @input="updateFilenameMime($event, String(filename), mime)"
-                placeholder="filename.txt"
-              />
-              <input 
-                class="input input--small" 
-                type="text" 
-                v-model="settings.filenameMimes![filename]"
-                placeholder="text/plain"
-              />
-              <button 
-                type="button" 
-                class="button button--small button--flat"
-                @click="removeFilenameMime(String(filename))"
-              >
-                <i class="material-icons">delete</i>
-              </button>
-            </div>
-            <button 
-              type="button" 
-              class="button button--small button--flat"
-              @click="addFilenameMime"
-            >
-              <i class="material-icons">add</i>
-              {{ t("settings.addFilenameMime") }}
-            </button>
-          </div>
         </div>
 
         <div class="card-action">
@@ -296,6 +226,94 @@
                 v-model.trim="commandObject[key]"
               ></textarea>
             </div>
+          </div>
+        </div>
+
+        <div class="card-action">
+          <input
+            class="button button--flat"
+            type="submit"
+            :value="t('buttons.update')"
+          />
+        </div>
+      </form>
+    </div>
+
+    <div class="column">
+      <form class="card" @submit.prevent="save">
+        <div class="card-title">
+          <h2>{{ t("settings.mimeTypes") }}</h2>
+        </div>
+
+        <div class="card-content">
+          <p class="small">{{ t("settings.mimeTypesHelp") }}</p>
+          
+          <div class="mime-types-section">
+            <h4>{{ t("settings.extensionMimeTypes") }}</h4>
+            <div v-for="(mime, ext) in settings.mimeTypes || {}" :key="ext" class="mime-entry">
+              <input 
+                class="input input--small" 
+                type="text" 
+                :value="ext" 
+                @input="updateMimeExtension($event, String(ext), mime)"
+                placeholder=".ext"
+              />
+              <input 
+                class="input input--small" 
+                type="text" 
+                v-model="settings.mimeTypes![ext]"
+                placeholder="text/plain"
+              />
+              <button 
+                type="button" 
+                class="button button--small button--flat"
+                @click="removeMimeType(String(ext))"
+              >
+                <i class="material-icons">delete</i>
+              </button>
+            </div>
+            <button 
+              type="button" 
+              class="button button--small button--flat"
+              @click="addMimeType"
+            >
+              <i class="material-icons">add</i>
+              {{ t("settings.addMimeType") }}
+            </button>
+          </div>
+
+          <div class="mime-types-section">
+            <h4>{{ t("settings.filenameMimeTypes") }}</h4>
+            <div v-for="(mime, filename) in settings.filenameMimes || {}" :key="filename" class="mime-entry">
+              <input 
+                class="input input--small" 
+                type="text" 
+                :value="filename" 
+                @input="updateFilenameMime($event, String(filename), mime)"
+                placeholder="filename.txt"
+              />
+              <input 
+                class="input input--small" 
+                type="text" 
+                v-model="settings.filenameMimes![filename]"
+                placeholder="text/plain"
+              />
+              <button 
+                type="button" 
+                class="button button--small button--flat"
+                @click="removeFilenameMime(String(filename))"
+              >
+                <i class="material-icons">delete</i>
+              </button>
+            </div>
+            <button 
+              type="button" 
+              class="button button--small button--flat"
+              @click="addFilenameMime"
+            >
+              <i class="material-icons">add</i>
+              {{ t("settings.addFilenameMime") }}
+            </button>
           </div>
         </div>
 
