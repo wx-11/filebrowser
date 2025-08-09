@@ -274,7 +274,7 @@
                       </option>
                     </select>
                     <input 
-                      v-if="!commonMimeTypes.find(m => m.value === settings.mimeTypes![ext])"
+                      v-if="settings?.mimeTypes && !commonMimeTypes.find(m => m.value === settings.mimeTypes![ext])"
                       class="input mime-type-input" 
                       type="text" 
                       v-model="settings.mimeTypes![ext]"
@@ -330,7 +330,7 @@
                       </option>
                     </select>
                     <input 
-                      v-if="!commonMimeTypes.find(m => m.value === settings.filenameMimes![filename])"
+                      v-if="settings?.filenameMimes && !commonMimeTypes.find(m => m.value === settings.filenameMimes![filename])"
                       class="input mime-type-input" 
                       type="text" 
                       v-model="settings.filenameMimes![filename]"
