@@ -264,7 +264,7 @@
                   />
                   <div class="mime-type-wrapper">
                     <select 
-                      v-model="settings.mimeTypes![ext]"
+                      v-model="settings.mimeTypes[ext]"
                       class="input mime-type-select"
                       @change="saveMimeTypesDebounced"
                     >
@@ -274,10 +274,10 @@
                       </option>
                     </select>
                     <input 
-                      v-if="settings?.mimeTypes && !commonMimeTypes.find(m => m.value === settings.mimeTypes![ext])"
+                      v-if="settings?.mimeTypes && !commonMimeTypes.find(m => m.value === settings?.mimeTypes?.[ext])"
                       class="input mime-type-input" 
                       type="text" 
-                      v-model="settings.mimeTypes![ext]"
+                      v-model="settings.mimeTypes[ext]"
                       @input="saveMimeTypesDebounced"
                       placeholder="application/octet-stream"
                       spellcheck="false"
@@ -320,7 +320,7 @@
                   />
                   <div class="mime-type-wrapper">
                     <select 
-                      v-model="settings.filenameMimes![filename]"
+                      v-model="settings.filenameMimes[filename]"
                       class="input mime-type-select"
                       @change="saveMimeTypesDebounced"
                     >
@@ -330,10 +330,10 @@
                       </option>
                     </select>
                     <input 
-                      v-if="settings?.filenameMimes && !commonMimeTypes.find(m => m.value === settings.filenameMimes![filename])"
+                      v-if="settings?.filenameMimes && !commonMimeTypes.find(m => m.value === settings?.filenameMimes?.[filename])"
                       class="input mime-type-input" 
                       type="text" 
-                      v-model="settings.filenameMimes![filename]"
+                      v-model="settings.filenameMimes[filename]"
                       @input="saveMimeTypesDebounced"
                       placeholder="application/octet-stream"
                       spellcheck="false"
