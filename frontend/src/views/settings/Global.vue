@@ -251,7 +251,7 @@
           <div class="mime-types-section">
             <h4>{{ t("settings.extensionMimeTypes") }}</h4>
             <div class="mime-entries-container">
-              <div v-for="(mime, ext) in settings.mimeTypes || {}" :key="ext" class="mime-entry">
+              <div v-for="(mime, ext) in mimeTypes" :key="ext" class="mime-entry">
                 <div class="mime-entry-inputs">
                   <input 
                     class="input mime-ext-input" 
@@ -264,9 +264,9 @@
                   />
                   <div class="mime-type-wrapper">
                     <select 
-                      v-model="settings.mimeTypes[ext]"
+                      :value="mime"
+                      @change="updateMimeTypeValue(String(ext), $event)"
                       class="input mime-type-select"
-                      @change="saveMimeTypesDebounced"
                     >
                       <option value="">{{ t('settings.customMimeType') }}</option>
                       <option v-for="mimeType in commonMimeTypes" :key="mimeType.value" :value="mimeType.value">
@@ -274,10 +274,11 @@
                       </option>
                     </select>
                     <input 
-                      v-if="settings?.mimeTypes && !commonMimeTypes.find(m => m.value === settings?.mimeTypes?.[ext])"
+                      v-if="!commonMimeTypes.find(m => m.value === mime)"
                       class="input mime-type-input" 
                       type="text" 
-                      v-model="settings.mimeTypes[ext]"
+                      :value="mime"
+                      @input="updateMimeTypeValue(String(ext), $event)"
                       @input="saveMimeTypesDebounced"
                       placeholder="application/octet-stream"
                       spellcheck="false"
@@ -307,7 +308,7 @@
           <div class="mime-types-section">
             <h4>{{ t("settings.filenameMimeTypes") }}</h4>
             <div class="mime-entries-container">
-              <div v-for="(mime, filename) in settings.filenameMimes || {}" :key="filename" class="mime-entry">
+              <div v-for="(mime, filename) in filenameMimes" :key="filename" class="mime-entry">
                 <div class="mime-entry-inputs">
                   <input 
                     class="input mime-ext-input" 
@@ -320,9 +321,9 @@
                   />
                   <div class="mime-type-wrapper">
                     <select 
-                      v-model="settings.filenameMimes[filename]"
+                      :value="mime"
+                      @change="updateFilenameMimeValue(String(filename), $event)"
                       class="input mime-type-select"
-                      @change="saveMimeTypesDebounced"
                     >
                       <option value="">{{ t('settings.customMimeType') }}</option>
                       <option v-for="mimeType in commonMimeTypes" :key="mimeType.value" :value="mimeType.value">
@@ -330,10 +331,11 @@
                       </option>
                     </select>
                     <input 
-                      v-if="settings?.filenameMimes && !commonMimeTypes.find(m => m.value === settings?.filenameMimes?.[filename])"
+                      v-if="!commonMimeTypes.find(m => m.value === mime)"
                       class="input mime-type-input" 
                       type="text" 
-                      v-model="settings.filenameMimes[filename]"
+                      :value="mime"
+                      @input="updateFilenameMimeValue(String(filename), $event)"
                       @input="saveMimeTypesDebounced"
                       placeholder="application/octet-stream"
                       spellcheck="false"
@@ -402,6 +404,10 @@ const $showSuccess = inject<IToastSuccess>("$showSuccess")!;
 const { t } = useI18n();
 
 const layoutStore = useLayoutStore();
+
+// Computed properties for safe access
+const mimeTypes = computed(() => settings.value?.mimeTypes || {});
+const filenameMimes = computed(() => settings.value?.filenameMimes || {});
 
 // Common MIME types with Chinese descriptions
 const commonMimeTypes = [
@@ -611,6 +617,20 @@ const updateFilenameMime = (event: Event, oldFilename: string, mime: string) => 
   
   delete settings.value.filenameMimes[oldFilename];
   settings.value.filenameMimes[newFilename] = mime;
+};
+
+// Update MIME type value
+const updateMimeTypeValue = (ext: string, event: Event) => {
+  if (!settings.value?.mimeTypes) return;
+  const target = event.target as HTMLInputElement | HTMLSelectElement;
+  settings.value.mimeTypes[ext] = target.value;
+};
+
+// Update filename MIME value
+const updateFilenameMimeValue = (filename: string, event: Event) => {
+  if (!settings.value?.filenameMimes) return;
+  const target = event.target as HTMLInputElement | HTMLSelectElement;
+  settings.value.filenameMimes[filename] = target.value;
 };
 
 // Debounced save function for automatic saving
