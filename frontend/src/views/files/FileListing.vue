@@ -857,6 +857,13 @@ const sort = async (by: string) => {
     $showError(e);
   }
 
+  // If sorting by size, trigger directory size calculation
+  if (by === "size") {
+    fileStore.calculateDirSizes = true;
+  } else {
+    fileStore.calculateDirSizes = false;
+  }
+
   fileStore.reload = true;
 };
 

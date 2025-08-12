@@ -34,8 +34,18 @@
     <div>
       <p class="name">{{ name }}</p>
 
-      <p v-if="isDir" class="size" data-order="-1">&mdash;</p>
-      <p v-else class="size" :data-order="humanSize()">{{ humanSize() }}</p>
+      <p v-if="isDir" class="size dir-size" :data-order="dirSizeValue || -1">
+        <span v-if="calculatingSize" class="calculating">
+          <i class="material-icons spin-icon">autorenew</i>
+        </span>
+        <span v-else-if="dirSizeValue !== null" @click.stop="calculateSize">
+          {{ filesize(dirSizeValue) }}
+        </span>
+        <span v-else @click.stop="calculateSize" class="calculate-link">
+          &mdash;
+        </span>
+      </p>
+      <p v-else class="size" :data-order="size">{{ humanSize() }}</p>
 
       <p class="modified">
         <time :datetime="modified">{{ humanTime() }}</time>
@@ -65,6 +75,10 @@ const longPressDelay = ref<number>(500);
 const startPosition = ref<{ x: number; y: number } | null>(null);
 const moveThreshold = ref<number>(10);
 const longPressSelected = ref<boolean>(false);
+
+// Directory size calculation
+const dirSizeValue = ref<number | null>(null);
+const calculatingSize = ref<boolean>(false);
 
 const $showError = inject<IToastError>("$showError")!;
 const route = useRoute();
@@ -328,6 +342,28 @@ const getMimeTypeCategory = (fileType: string) => {
   return "";
 };
 
+const calculateSize = async () => {
+  if (!props.isDir || calculatingSize.value) return;
+  
+  calculatingSize.value = true;
+  try {
+    // Use fetchURL directly for the API call
+    const { fetchURL } = await import("@/api/utils");
+    const response = await fetchURL(`/api/dirsize${props.url}`, {});
+    const data = await response.json();
+    dirSizeValue.value = data.size;
+    
+    // Update the item in the store if it exists
+    if (fileStore.req && fileStore.req.items && fileStore.req.items[props.index]) {
+      fileStore.req.items[props.index].size = data.size;
+    }
+  } catch (e: any) {
+    $showError(e);
+  } finally {
+    calculatingSize.value = false;
+  }
+};
+
 // Long-press helper functions
 const startLongPress = (clientX: number, clientY: number) => {
   startPosition.value = { x: clientX, y: clientY };
@@ -429,3 +465,39 @@ const handleTouchMove = (event: TouchEvent) => {
   }
 };
 </script>
+
+<style scoped>
+.dir-size {
+  position: relative;
+}
+
+.calculate-link {
+  cursor: pointer;
+  color: var(--blue);
+  transition: color 0.2s;
+}
+
+.calculate-link:hover {
+  color: var(--dark-blue);
+  text-decoration: underline;
+}
+
+.calculating {
+  display: inline-flex;
+  align-items: center;
+}
+
+.spin-icon {
+  font-size: 14px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>

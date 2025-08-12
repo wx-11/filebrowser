@@ -16,6 +16,21 @@
       <p v-if="!dir || selected.length > 1">
         <strong>{{ $t("prompts.size") }}:</strong>
         <span id="content_length"></span> {{ humanSize }}
+        <span v-if="!dir && sizeInBytes" class="size-bytes"> ({{ sizeInBytes.toLocaleString() }} bytes)</span>
+      </p>
+      
+      <p v-if="dir && selected.length === 1">
+        <strong>{{ $t("prompts.size") }}:</strong>
+        <span v-if="calculatingDirSize" class="calculating-size">
+          <i class="material-icons spin">autorenew</i> {{ $t("prompts.calculating") }}...
+        </span>
+        <span v-else-if="dirSize !== null">
+          {{ humanDirSize }}
+          <span class="size-bytes"> ({{ dirSize.toLocaleString() }} bytes)</span>
+        </span>
+        <button v-else @click="calculateDirSize" class="calculate-size-btn">
+          {{ $t("prompts.calculateSize") }}
+        </button>
       </p>
 
       <div v-if="resolution">
@@ -110,6 +125,12 @@ import { files as api } from "@/api";
 export default {
   name: "info",
   inject: ["$showError"],
+  data() {
+    return {
+      dirSize: null,
+      calculatingDirSize: false,
+    };
+  },
   computed: {
     ...mapState(useFileStore, [
       "req",
@@ -129,6 +150,20 @@ export default {
       }
 
       return filesize(sum);
+    },
+    sizeInBytes: function () {
+      if (this.selectedCount === 0 || !this.isListing) {
+        return this.req.size;
+      }
+
+      let sum = 0;
+      for (const selected of this.selected) {
+        sum += this.req.items[selected].size;
+      }
+      return sum;
+    },
+    humanDirSize: function () {
+      return this.dirSize !== null ? filesize(this.dirSize) : "";
     },
     humanTime: function () {
       if (this.selectedCount === 0) {
@@ -191,6 +226,74 @@ export default {
         this.$showError(e);
       }
     },
+    async calculateDirSize() {
+      this.calculatingDirSize = true;
+      try {
+        let path;
+        if (this.selectedCount === 1) {
+          path = this.req.items[this.selected[0]].url;
+        } else {
+          path = this.$route.path;
+        }
+        
+        // Import fetchURL and use it directly for the API call
+        const { fetchURL } = await import("@/api/utils");
+        const response = await fetchURL(`/api/dirsize${path}`, {});
+        const data = await response.json();
+        this.dirSize = data.size;
+      } catch (e) {
+        this.$showError(e);
+      } finally {
+        this.calculatingDirSize = false;
+      }
+    },
   },
 };
 </script>
+
+<style scoped>
+.size-bytes {
+  color: #666;
+  font-size: 0.9em;
+  margin-left: 5px;
+}
+
+.calculate-size-btn {
+  background: var(--blue);
+  color: white;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85em;
+  margin-left: 10px;
+}
+
+.calculate-size-btn:hover {
+  background: var(--dark-blue);
+}
+
+.calculating-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--blue);
+}
+
+.calculating-size .material-icons {
+  font-size: 16px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+</style>

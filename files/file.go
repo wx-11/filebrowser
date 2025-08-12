@@ -331,6 +331,37 @@ func calculateImageResolution(fSys afero.Fs, filePath string) (*ImageResolution,
 	}, nil
 }
 
+// CalculateDirectorySize recursively calculates the total size of a directory
+func (i *FileInfo) CalculateDirectorySize() (int64, error) {
+	if !i.IsDir {
+		return i.Size, nil
+	}
+
+	var totalSize int64
+	
+	err := afero.Walk(i.Fs, i.Path, func(path string, info fs.FileInfo, err error) error {
+		if err != nil {
+			// Skip directories that can't be accessed
+			if errors.Is(err, os.ErrPermission) {
+				return nil
+			}
+			return err
+		}
+		
+		if !info.IsDir() {
+			totalSize += info.Size()
+		}
+		
+		return nil
+	})
+	
+	if err != nil {
+		return 0, err
+	}
+	
+	return totalSize, nil
+}
+
 func (i *FileInfo) readFirstBytes() []byte {
 	reader, err := i.Fs.Open(i.Path)
 	if err != nil {

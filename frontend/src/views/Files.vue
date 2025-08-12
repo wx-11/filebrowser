@@ -152,7 +152,7 @@ const fetchData = async () => {
   fetchDataController.abort();
   fetchDataController = new AbortController();
   try {
-    const res = await api.fetch(url, fetchDataController.signal);
+    const res = await api.fetch(url, fetchDataController.signal, fileStore.calculateDirSizes);
     fileStore.updateRequest(res);
     document.title = `${res.name || t("sidebar.myFiles")} - ${t("files.files")} - ${name}`;
     layoutStore.loading = false;

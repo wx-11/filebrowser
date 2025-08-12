@@ -22,6 +22,28 @@ import (
 	"github.com/filebrowser/filebrowser/v2/fileutils"
 )
 
+var directorySizeHandler = withUser(func(w http.ResponseWriter, r *http.Request, d *data) (int, error) {
+	file, err := files.NewFileInfo(&files.FileOptions{
+		Fs:         d.user.Fs,
+		Path:       r.URL.Path,
+		Modify:     d.user.Perm.Modify,
+		Expand:     false,
+		ReadHeader: false,
+		Checker:    d,
+		Content:    false,
+	})
+	if err != nil {
+		return errToStatus(err), err
+	}
+
+	size, err := file.CalculateDirectorySize()
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	return renderJSON(w, r, map[string]int64{"size": size})
+})
+
 var resourceGetHandler = withUser(func(w http.ResponseWriter, r *http.Request, d *data) (int, error) {
 	file, err := files.NewFileInfo(&files.FileOptions{
 		Fs:         d.user.Fs,
@@ -39,6 +61,21 @@ var resourceGetHandler = withUser(func(w http.ResponseWriter, r *http.Request, d
 	if file.IsDir {
 		file.Listing.Sorting = d.user.Sorting
 		file.Listing.ApplySort()
+		
+		// Check if we need to calculate directory sizes for sorting
+		if r.URL.Query().Get("calculateDirSizes") == "true" {
+			for _, item := range file.Listing.Items {
+				if item.IsDir {
+					size, err := item.CalculateDirectorySize()
+					if err == nil {
+						item.Size = size
+					}
+				}
+			}
+			// Re-apply sort after calculating sizes
+			file.Listing.ApplySort()
+		}
+		
 		return renderJSON(w, r, file)
 	}
 

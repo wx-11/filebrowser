@@ -4,9 +4,16 @@ import { baseURL } from "@/utils/constants";
 import { upload as postTus, useTus } from "./tus";
 import { createURL, fetchURL, removePrefix, StatusError } from "./utils";
 
-export async function fetch(url: string, signal?: AbortSignal) {
+export async function fetch(url: string, signal?: AbortSignal, calculateDirSizes?: boolean) {
   url = removePrefix(url);
-  const res = await fetchURL(`/api/resources${url}`, { signal });
+  let apiUrl = `/api/resources${url}`;
+  
+  // Add query parameter for calculating directory sizes
+  if (calculateDirSizes) {
+    apiUrl += (apiUrl.includes('?') ? '&' : '?') + 'calculateDirSizes=true';
+  }
+  
+  const res = await fetchURL(apiUrl, { signal });
 
   let data: Resource;
   try {

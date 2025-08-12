@@ -11,6 +11,7 @@ export const useFileStore = defineStore("file", {
     isFiles: boolean;
     preselect: string | null;
     scrollPosition: { [path: string]: number };
+    calculateDirSizes: boolean;
   } => ({
     req: null,
     oldReq: null,
@@ -20,6 +21,7 @@ export const useFileStore = defineStore("file", {
     isFiles: false,
     preselect: null,
     scrollPosition: {},
+    calculateDirSizes: false,
   }),
   getters: {
     selectedCount: (state) => state.selected.length,
