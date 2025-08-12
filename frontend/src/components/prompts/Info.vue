@@ -236,9 +236,10 @@ export default {
           path = this.$route.path;
         }
         
-        // Import fetchURL and use it directly for the API call
-        const { fetchURL } = await import("@/api/utils");
-        const response = await fetchURL(`/api/dirsize${path}`, {});
+        // Import fetchURL and removePrefix, and use them directly for the API call
+        const { fetchURL, removePrefix } = await import("@/api/utils");
+        const cleanPath = removePrefix(path);
+        const response = await fetchURL(`/api/dirsize${cleanPath}`, {});
         const data = await response.json();
         this.dirSize = data.size;
       } catch (e) {

@@ -36,13 +36,15 @@
 
       <p v-if="isDir" class="size dir-size" :data-order="dirSizeValue || -1">
         <span v-if="calculatingSize" class="calculating">
-          <i class="material-icons spin-icon">autorenew</i>
+          <span class="loading-dots">
+            <span>计</span><span>算</span><span>中</span>
+          </span>
         </span>
-        <span v-else-if="dirSizeValue !== null" @click.stop="calculateSize">
+        <span v-else-if="dirSizeValue !== null" @click.stop="calculateSize" class="size-value">
           {{ filesize(dirSizeValue) }}
         </span>
         <span v-else @click.stop="calculateSize" class="calculate-link">
-          &mdash;
+          计算
         </span>
       </p>
       <p v-else class="size" :data-order="size">{{ humanSize() }}</p>
@@ -348,8 +350,9 @@ const calculateSize = async () => {
   calculatingSize.value = true;
   try {
     // Use fetchURL directly for the API call
-    const { fetchURL } = await import("@/api/utils");
-    const response = await fetchURL(`/api/dirsize${props.url}`, {});
+    const { fetchURL, removePrefix } = await import("@/api/utils");
+    const cleanPath = removePrefix(props.url);
+    const response = await fetchURL(`/api/dirsize${cleanPath}`, {});
     const data = await response.json();
     dirSizeValue.value = data.size;
     
@@ -474,30 +477,62 @@ const handleTouchMove = (event: TouchEvent) => {
 .calculate-link {
   cursor: pointer;
   color: var(--blue);
-  transition: color 0.2s;
+  transition: all 0.2s;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.85em;
 }
 
 .calculate-link:hover {
+  background: rgba(0, 123, 255, 0.1);
   color: var(--dark-blue);
-  text-decoration: underline;
+}
+
+.size-value {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.size-value:hover {
+  color: var(--blue);
 }
 
 .calculating {
   display: inline-flex;
   align-items: center;
+  color: var(--blue);
 }
 
-.spin-icon {
-  font-size: 14px;
-  animation: spin 1s linear infinite;
+.loading-dots {
+  display: inline-flex;
+  font-size: 0.85em;
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
+.loading-dots span {
+  animation: wave 1.4s ease-in-out infinite;
+  display: inline-block;
+}
+
+.loading-dots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+@keyframes wave {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 1;
   }
-  to {
-    transform: rotate(360deg);
+  30% {
+    transform: translateY(-3px);
+    opacity: 0.7;
   }
 }
 </style>
