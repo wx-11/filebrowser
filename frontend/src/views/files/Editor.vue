@@ -207,11 +207,21 @@ const save = async () => {
   buttons.loading("save");
 
   try {
-    await api.put(route.path, editor.value?.getValue());
+    // Use skipAuthRedirect=true to prevent auto-logout on 401
+    await api.put(route.path, editor.value?.getValue(), true);
     editor.value?.session.getUndoManager().markClean();
     buttons.success(button);
   } catch (e: any) {
     buttons.done(button);
+    
+    // Handle 401 error specially - don't redirect to login
+    if (e.status === 401) {
+      // Show error without redirecting
+      $showError(new Error("登录已失效，请在新标签页重新登录后再保存。请先复制编辑内容以防丢失。"));
+      // Prevent the default 401 handler from redirecting
+      return;
+    }
+    
     $showError(e);
   }
 };

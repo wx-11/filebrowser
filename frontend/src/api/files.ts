@@ -65,7 +65,27 @@ export async function remove(url: string) {
   return resourceAction(url, "DELETE");
 }
 
-export async function put(url: string, content = "") {
+export async function put(url: string, content = "", skipAuthRedirect = false) {
+  if (skipAuthRedirect) {
+    // Special handling for editor - don't auto-redirect on 401
+    url = removePrefix(url);
+    const opts: ApiOpts = {
+      method: "PUT",
+      body: content,
+    };
+    
+    // Use fetchURL with auth: false to prevent auto-logout
+    const res = await fetchURL(`/api/resources${url}`, opts, false);
+    if (res.status < 200 || res.status > 299) {
+      const body = await res.text();
+      throw new StatusError(
+        body || `${res.status} ${res.statusText}`,
+        res.status
+      );
+    }
+    return res;
+  }
+  
   return resourceAction(url, "PUT", content);
 }
 

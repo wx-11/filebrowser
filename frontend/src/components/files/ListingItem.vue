@@ -474,6 +474,7 @@ const handleTouchMove = (event: TouchEvent) => {
   position: relative;
 }
 
+/* Default state - use blue color */
 .calculate-link {
   cursor: pointer;
   color: var(--blue);
@@ -488,6 +489,18 @@ const handleTouchMove = (event: TouchEvent) => {
   color: var(--dark-blue);
 }
 
+/* When item is selected, inherit the text color (white on blue background) */
+.item[aria-selected="true"] .calculate-link {
+  color: inherit !important;
+  opacity: 0.9;
+}
+
+.item[aria-selected="true"] .calculate-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 1;
+}
+
+/* Size value styles */
 .size-value {
   cursor: pointer;
   transition: color 0.2s;
@@ -497,10 +510,23 @@ const handleTouchMove = (event: TouchEvent) => {
   color: var(--blue);
 }
 
+.item[aria-selected="true"] .size-value {
+  color: inherit !important;
+}
+
+.item[aria-selected="true"] .size-value:hover {
+  opacity: 0.8;
+}
+
+/* Calculating state */
 .calculating {
   display: inline-flex;
   align-items: center;
   color: var(--blue);
+}
+
+.item[aria-selected="true"] .calculating {
+  color: inherit !important;
 }
 
 .loading-dots {
