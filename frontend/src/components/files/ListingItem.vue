@@ -117,8 +117,9 @@ const displaySize = computed(() => {
   if (dirSizeValue.value !== null) {
     return dirSizeValue.value;
   }
-  // If backend calculated the size (when sorting by size), use it
-  if (props.isDir && props.size > 0) {
+  // Only show backend-provided size if it's not the default directory metadata size (4096)
+  // Directories typically have a metadata size of 4096 bytes which shouldn't be shown
+  if (props.isDir && props.size > 4096) {
     return props.size;
   }
   return null;

@@ -60,8 +60,7 @@ export default {
   },
   mounted() {
     // Select only the filename prefix (before the extension)
-    // Use setTimeout to ensure DOM is fully ready
-    setTimeout(() => {
+    this.$nextTick(() => {
       const input = document.getElementById("focus-prompt");
       if (input && this.name) {
         // Focus first
@@ -76,7 +75,7 @@ export default {
           input.setSelectionRange(0, this.name.length);
         }
       }
-    }, 50);
+    });
   },
   inject: ["$showError"],
   computed: {
