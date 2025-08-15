@@ -40,7 +40,7 @@
             <span>计</span><span>算</span><span>中</span>
           </span>
         </span>
-        <span v-else-if="displaySize !== null && displaySize > 0" @click.stop="calculateSize" class="size-value">
+        <span v-else-if="displaySize !== null && displaySize >= 0" @click.stop="calculateSize" class="size-value">
           {{ filesize(displaySize) }}
         </span>
         <span v-else @click.stop="calculateSize" class="calculate-link">
@@ -112,17 +112,30 @@ const isDraggable = computed(
   () => !props.readOnly && authStore.user?.perm.rename
 );
 
-// Display size: use calculated size if available, or props.size if it was calculated by backend
-const displaySize = computed(() => {
+// Track if size has been calculated (either locally or from backend during sort)
+const isSizeCalculated = computed(() => {
+  // Size is calculated if:
+  // 1. We calculated it locally (dirSizeValue is set)
+  // 2. Backend calculated it (sorting by size gives actual calculated sizes)
+  //    But we need to distinguish between uncalculated (4096) and calculated (including 0)
   if (dirSizeValue.value !== null) {
-    return dirSizeValue.value;
+    return true;
   }
-  // Only show backend-provided size if it's not the default directory metadata size (4096)
-  // Directories typically have a metadata size of 4096 bytes which shouldn't be shown
-  if (props.isDir && props.size > 4096) {
-    return props.size;
+  // When sorting by size, backend calculates all sizes. 
+  // Default metadata size 4096 means uncalculated
+  if (props.isDir && props.size !== 4096 && props.size >= 0) {
+    return true;
   }
-  return null;
+  return false;
+});
+
+// Display size: only show if explicitly calculated
+const displaySize = computed(() => {
+  if (!isSizeCalculated.value) {
+    return null;
+  }
+  // Return the calculated size (could be 0)
+  return dirSizeValue.value !== null ? dirSizeValue.value : props.size;
 });
 
 const canDrop = computed(() => {
