@@ -452,6 +452,11 @@ onMounted(() => {
 
   // How much every listing item affects the window height
   setItemWeight();
+  
+  // Check if currently sorted by size and set the flag
+  if (authStore.user?.sorting?.by === "size") {
+    fileStore.calculateDirSizes = true;
+  }
 
   // 先尝试恢复保存的滚动位置
   const currentPath = fileStore.req?.path || route.path;

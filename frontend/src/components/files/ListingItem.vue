@@ -34,14 +34,14 @@
     <div>
       <p class="name">{{ name }}</p>
 
-      <p v-if="isDir" class="size dir-size" :data-order="dirSizeValue || -1">
+      <p v-if="isDir" class="size dir-size" :data-order="displaySize || -1">
         <span v-if="calculatingSize" class="calculating">
           <span class="loading-dots">
             <span>计</span><span>算</span><span>中</span>
           </span>
         </span>
-        <span v-else-if="dirSizeValue !== null" @click.stop="calculateSize" class="size-value">
-          {{ filesize(dirSizeValue) }}
+        <span v-else-if="displaySize !== null && displaySize > 0" @click.stop="calculateSize" class="size-value">
+          {{ filesize(displaySize) }}
         </span>
         <span v-else @click.stop="calculateSize" class="calculate-link">
           计算
@@ -111,6 +111,18 @@ const isSelected = computed(
 const isDraggable = computed(
   () => !props.readOnly && authStore.user?.perm.rename
 );
+
+// Display size: use calculated size if available, or props.size if it was calculated by backend
+const displaySize = computed(() => {
+  if (dirSizeValue.value !== null) {
+    return dirSizeValue.value;
+  }
+  // If backend calculated the size (when sorting by size), use it
+  if (props.isDir && props.size > 0) {
+    return props.size;
+  }
+  return null;
+});
 
 const canDrop = computed(() => {
   if (!props.isDir || props.readOnly) return false;
@@ -490,14 +502,15 @@ const handleTouchMove = (event: TouchEvent) => {
 }
 
 /* When item is selected, inherit the text color (white on blue background) */
-.item[aria-selected="true"] .calculate-link {
-  color: inherit !important;
+.item[aria-selected="true"] .dir-size .calculate-link {
+  color: var(--iconSecondary) !important;
   opacity: 0.9;
 }
 
-.item[aria-selected="true"] .calculate-link:hover {
+.item[aria-selected="true"] .dir-size .calculate-link:hover {
   background: rgba(255, 255, 255, 0.15);
   opacity: 1;
+  color: var(--iconSecondary) !important;
 }
 
 /* Size value styles */
@@ -510,12 +523,13 @@ const handleTouchMove = (event: TouchEvent) => {
   color: var(--blue);
 }
 
-.item[aria-selected="true"] .size-value {
-  color: inherit !important;
+.item[aria-selected="true"] .dir-size .size-value {
+  color: var(--iconSecondary) !important;
 }
 
-.item[aria-selected="true"] .size-value:hover {
+.item[aria-selected="true"] .dir-size .size-value:hover {
   opacity: 0.8;
+  color: var(--iconSecondary) !important;
 }
 
 /* Calculating state */
@@ -525,8 +539,12 @@ const handleTouchMove = (event: TouchEvent) => {
   color: var(--blue);
 }
 
-.item[aria-selected="true"] .calculating {
-  color: inherit !important;
+.item[aria-selected="true"] .dir-size .calculating {
+  color: var(--iconSecondary) !important;
+}
+
+.item[aria-selected="true"] .dir-size .loading-dots {
+  color: var(--iconSecondary) !important;
 }
 
 .loading-dots {

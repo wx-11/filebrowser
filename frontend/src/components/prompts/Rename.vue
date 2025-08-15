@@ -60,20 +60,23 @@ export default {
   },
   mounted() {
     // Select only the filename prefix (before the extension)
-    this.$nextTick(() => {
+    // Use setTimeout to ensure DOM is fully ready
+    setTimeout(() => {
       const input = document.getElementById("focus-prompt");
       if (input && this.name) {
+        // Focus first
+        input.focus();
+        
         const lastDotIndex = this.name.lastIndexOf(".");
         if (lastDotIndex > 0) {
           // If there's an extension, select only the prefix
           input.setSelectionRange(0, lastDotIndex);
         } else {
           // If no extension, select all
-          input.select();
+          input.setSelectionRange(0, this.name.length);
         }
-        input.focus();
       }
-    });
+    }, 50);
   },
   inject: ["$showError"],
   computed: {

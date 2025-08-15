@@ -13,6 +13,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"sync"
 
 	"github.com/shirou/gopsutil/v3/disk"
 	"github.com/spf13/afero"
@@ -64,14 +65,39 @@ var resourceGetHandler = withUser(func(w http.ResponseWriter, r *http.Request, d
 		
 		// Check if we need to calculate directory sizes for sorting
 		if r.URL.Query().Get("calculateDirSizes") == "true" {
-			for _, item := range file.Listing.Items {
+			// Use goroutines for parallel calculation
+			type result struct {
+				index int
+				size  int64
+			}
+			
+			results := make(chan result, len(file.Listing.Items))
+			var wg sync.WaitGroup
+			
+			for i, item := range file.Listing.Items {
 				if item.IsDir {
-					size, err := item.CalculateDirectorySize()
-					if err == nil {
-						item.Size = size
-					}
+					wg.Add(1)
+					go func(idx int, fileItem *files.FileInfo) {
+						defer wg.Done()
+						size, err := fileItem.CalculateDirectorySize()
+						if err == nil {
+							results <- result{index: idx, size: size}
+						}
+					}(i, item)
 				}
 			}
+			
+			// Wait for all calculations to complete
+			go func() {
+				wg.Wait()
+				close(results)
+			}()
+			
+			// Apply the calculated sizes
+			for res := range results {
+				file.Listing.Items[res.index].Size = res.size
+			}
+			
 			// Re-apply sort after calculating sizes
 			file.Listing.ApplySort()
 		}
