@@ -98,7 +98,9 @@ export function logout() {
   const authStore = useAuthStore();
   authStore.clearUser();
 
-  localStorage.setItem("jwt", "");
+  // Completely remove JWT from localStorage
+  localStorage.removeItem("jwt");
+  
   if (noAuth) {
     window.location.reload();
   } else {

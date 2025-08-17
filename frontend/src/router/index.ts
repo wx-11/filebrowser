@@ -198,7 +198,14 @@ router.beforeResolve(async (to, from, next) => {
   }
 
   if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (!authStore.isLoggedIn) {
+    // Always check authentication status, even if store says logged in
+    const hasValidJwt = localStorage.getItem("jwt") && authStore.jwt && authStore.user;
+    
+    if (!authStore.isLoggedIn || !hasValidJwt) {
+      // Clear any stale auth state
+      authStore.clearUser();
+      localStorage.removeItem("jwt");
+      
       next({
         path: "/login",
         query: { redirect: to.fullPath },

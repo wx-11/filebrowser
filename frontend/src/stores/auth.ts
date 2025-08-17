@@ -13,7 +13,20 @@ export const useAuthStore = defineStore("auth", {
   }),
   getters: {
     // user and jwt getter removed, no longer needed
-    isLoggedIn: (state) => state.user !== null,
+    isLoggedIn: (state) => {
+      // Check both user exists and JWT is valid
+      if (!state.user || !state.jwt) {
+        return false;
+      }
+      
+      // Check if JWT exists in localStorage
+      const storedJwt = localStorage.getItem("jwt");
+      if (!storedJwt || storedJwt !== state.jwt) {
+        return false;
+      }
+      
+      return true;
+    },
   },
   actions: {
     // no context as first argument, use `this` instead
@@ -36,6 +49,8 @@ export const useAuthStore = defineStore("auth", {
     // easily reset state using `$reset`
     clearUser() {
       this.$reset();
+      // Also clear JWT to ensure clean state
+      this.jwt = "";
     },
   },
 });
