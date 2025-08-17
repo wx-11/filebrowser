@@ -5,6 +5,9 @@
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
   --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --vibrant-pink: #e91e63;
+  --vibrant-purple: #8e24aa;
+  --vibrant-orange: #ff5722;
 }
 
 /* 入场动画 */
@@ -59,9 +62,9 @@ nav .action:nth-child(4) { animation-delay: 0.4s; }
 nav .action:nth-child(5) { animation-delay: 0.5s; }
 
 nav .action:hover {
-  background: rgba(248, 187, 217, 0.1);
+  background: linear-gradient(135deg, rgba(233, 30, 99, 0.1) 0%, rgba(142, 36, 170, 0.1) 100%);
   transform: translateX(8px) scale(1.02);
-  box-shadow: 0 4px 12px rgba(248, 187, 217, 0.2);
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
 }
 
 /* 文件列表项动画 */
@@ -85,7 +88,7 @@ nav .action:hover {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(248, 187, 217, 0.05) 0%, rgba(244, 119, 80, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(233, 30, 99, 0.08) 0%, rgba(255, 87, 34, 0.08) 50%, rgba(142, 36, 170, 0.05) 100%);
   border-radius: inherit;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -133,7 +136,7 @@ nav .action:hover {
   left: -100%;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, var(--icon-orange), var(--blue));
+  background: linear-gradient(90deg, var(--vibrant-orange), var(--vibrant-pink), var(--vibrant-purple));
   transition: left 0.3s var(--ease-out-quart);
 }
 
@@ -214,7 +217,8 @@ nav .action:focus-visible,
 
 #listing .item:hover i {
   transform: scale(1.1) rotate(5deg);
-  color: var(--icon-orange);
+  color: var(--vibrant-orange);
+  filter: drop-shadow(0 2px 4px rgba(255, 87, 34, 0.3));
 }
 
 /* 毛玻璃效果增强 */

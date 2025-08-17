@@ -495,7 +495,7 @@ const handleTouchMove = (event: TouchEvent) => {
   position: relative;
 }
 
-/* Default state - use blue color */
+/* Default state - use vibrant pink color */
 .calculate-link {
   cursor: pointer;
   color: var(--blue);
@@ -503,11 +503,14 @@ const handleTouchMove = (event: TouchEvent) => {
   padding: 2px 6px;
   border-radius: 3px;
   font-size: 0.85em;
+  font-weight: 500;
+  margin-left: -4px;  /* 往左移动4px对齐 */
 }
 
 .calculate-link:hover {
-  background: rgba(248, 187, 217, 0.1);
+  background: rgba(233, 30, 99, 0.15);
   color: var(--dark-blue);
+  transform: scale(1.05);
 }
 
 /* When item is selected, inherit the text color (white on blue background) */
@@ -526,10 +529,12 @@ const handleTouchMove = (event: TouchEvent) => {
 .size-value {
   cursor: pointer;
   transition: color 0.2s;
+  margin-left: -4px;  /* 保持与计算按钮对齐 */
 }
 
 .size-value:hover {
   color: var(--blue);
+  transform: scale(1.02);
 }
 
 .item[aria-selected="true"] .dir-size .size-value {
@@ -546,6 +551,8 @@ const handleTouchMove = (event: TouchEvent) => {
   display: inline-flex;
   align-items: center;
   color: var(--blue);
+  font-weight: 500;
+  margin-left: -4px;  /* 保持与其他状态对齐 */
 }
 
 .item[aria-selected="true"] .dir-size .calculating {

@@ -17,12 +17,18 @@
 
 /* 现代化颜色变量 */
 :root {
-  --modern-primary: #f47750;     /* 橙色主色 */
-  --modern-secondary: #f8bbd9;   /* 粉色辅助色 */
-  --modern-accent: #ec4899;      /* 深粉色强调色 */
-  --modern-gradient: linear-gradient(135deg, #f47750 0%, #f8bbd9 100%);
+  --modern-primary: #ff5722;     /* 鲜橙色主色 */
+  --modern-secondary: #e91e63;   /* 深粉色辅助色 */
+  --modern-accent: #8e24aa;      /* 紫色强调色 */
+  --modern-gradient: linear-gradient(135deg, #ff5722 0%, #e91e63 50%, #8e24aa 100%);
   --modern-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06);
   --modern-shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+  --modern-bg-light: rgba(255, 245, 240, 0.4);  /* 非常浅的橙色背景 */
+}
+
+/* 整体背景浅橙色 */
+body {
+  background: linear-gradient(135deg, var(--modern-bg-light) 0%, rgba(255, 248, 245, 0.3) 100%) !important;
 }
 
 /* 现代化按钮设计 */
@@ -43,8 +49,8 @@
 }
 
 .button--blue {
-  background: linear-gradient(135deg, var(--modern-primary) 0%, #e67038 100%) !important;
-  box-shadow: 0 4px 12px rgba(244, 119, 80, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  background: linear-gradient(135deg, var(--modern-primary) 0%, #ff3d00 100%) !important;
+  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.4), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* 现代化卡片设计 */
@@ -59,7 +65,7 @@
 #listing.mosaic .item:hover {
   transform: translateY(-4px) !important;
   box-shadow: var(--modern-shadow-hover) !important;
-  background: linear-gradient(135deg, var(--surfacePrimary) 0%, rgba(248, 187, 217, 0.05) 100%) !important;
+  background: linear-gradient(135deg, var(--surfacePrimary) 0%, rgba(233, 30, 99, 0.08) 50%, rgba(142, 36, 170, 0.05) 100%) !important;
 }
 
 /* 现代化头部设计 */
@@ -72,7 +78,7 @@ header {
 
 header title {
   font-weight: 600 !important;
-  background: linear-gradient(135deg, var(--textSecondary) 0%, var(--modern-primary) 100%) !important;
+  background: linear-gradient(135deg, var(--textSecondary) 0%, var(--modern-primary) 50%, var(--modern-accent) 100%) !important;
   -webkit-background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   background-clip: text !important;
@@ -102,9 +108,9 @@ nav .action {
 }
 
 nav .action:hover {
-  background: rgba(248, 187, 217, 0.1) !important;
+  background: linear-gradient(135deg, rgba(233, 30, 99, 0.12) 0%, rgba(142, 36, 170, 0.08) 100%) !important;
   transform: translateX(8px) scale(1.02) !important;
-  box-shadow: 0 4px 12px rgba(248, 187, 217, 0.2) !important;
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3) !important;
 }
 
 /* 现代化面包屑导航 */
@@ -131,7 +137,7 @@ nav .action:hover {
   left: -100% !important;
   width: 100% !important;
   height: 2px !important;
-  background: linear-gradient(90deg, var(--modern-primary), var(--modern-secondary)) !important;
+  background: linear-gradient(90deg, var(--modern-primary), var(--modern-secondary), var(--modern-accent)) !important;
   transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
@@ -147,6 +153,7 @@ nav .action:hover {
 #listing .item:hover i {
   transform: scale(1.1) rotate(5deg) !important;
   color: var(--modern-primary) !important;
+  filter: drop-shadow(0 2px 4px rgba(255, 87, 34, 0.3)) !important;
 }
 
 /* 现代化滚动条 */
@@ -156,7 +163,7 @@ nav .action:hover {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(248, 187, 217, 0.1) !important;
+  background: rgba(233, 30, 99, 0.1) !important;
   border-radius: 4px !important;
 }
 
@@ -167,7 +174,7 @@ nav .action:hover {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, var(--modern-accent) 0%, #e67038 100%) !important;
+  background: linear-gradient(135deg, var(--modern-secondary) 0%, var(--modern-accent) 100%) !important;
 }
 
 /* 现代化选中状态 */
@@ -279,7 +286,7 @@ header {
 /* 深色模式适配 */
 @media (prefers-color-scheme: dark) {
   :root {
-    --modern-gradient: linear-gradient(135deg, #f47750 0%, #d946ef 100%);
+    --modern-gradient: linear-gradient(135deg, #ff5722 0%, #e91e63 50%, #8e24aa 100%);
   }
   
   header {

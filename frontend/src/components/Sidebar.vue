@@ -89,7 +89,7 @@
       v-if="isFiles && !disableUsedPercentage"
       style="width: 90%; margin: 2em 2.5em 3em 2.5em"
     >
-      <progress-bar :val="usage.usedPercentage" size="small" bar-color="#f47750"></progress-bar>
+      <progress-bar :val="usage.usedPercentage" size="small" bar-color="#ff5722"></progress-bar>
       <br />
       {{ usage.used }} of {{ usage.total }} used
     </div>
