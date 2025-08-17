@@ -1,0 +1,244 @@
+/* 现代化动画和效果 */
+
+/* 全局动画变量 */
+:root {
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* 入场动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 页面级别动画 */
+#app {
+  animation: fadeInUp 0.6s var(--ease-out-quart);
+}
+
+/* 侧边栏动画 */
+nav .action {
+  animation: slideInRight 0.4s var(--ease-out-quart);
+  animation-fill-mode: both;
+}
+
+nav .action:nth-child(1) { animation-delay: 0.1s; }
+nav .action:nth-child(2) { animation-delay: 0.2s; }
+nav .action:nth-child(3) { animation-delay: 0.3s; }
+nav .action:nth-child(4) { animation-delay: 0.4s; }
+nav .action:nth-child(5) { animation-delay: 0.5s; }
+
+nav .action:hover {
+  background: rgba(248, 187, 217, 0.1);
+  transform: translateX(8px) scale(1.02);
+  box-shadow: 0 4px 12px rgba(248, 187, 217, 0.2);
+}
+
+/* 文件列表项动画 */
+#listing .item {
+  animation: scaleIn 0.3s var(--ease-out-quart);
+  animation-fill-mode: both;
+}
+
+#listing .item:nth-child(1) { animation-delay: 0.05s; }
+#listing .item:nth-child(2) { animation-delay: 0.1s; }
+#listing .item:nth-child(3) { animation-delay: 0.15s; }
+#listing .item:nth-child(4) { animation-delay: 0.2s; }
+#listing .item:nth-child(5) { animation-delay: 0.25s; }
+#listing .item:nth-child(6) { animation-delay: 0.3s; }
+
+/* 悬浮效果 */
+#listing.mosaic .item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(248, 187, 217, 0.05) 0%, rgba(244, 119, 80, 0.05) 100%);
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+#listing.mosaic .item:hover::before {
+  opacity: 1;
+}
+
+/* 按钮波纹效果 */
+.button {
+  overflow: hidden;
+  position: relative;
+}
+
+.button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.button:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* 面包屑导航动画 */
+.breadcrumbs a {
+  position: relative;
+  overflow: hidden;
+}
+
+.breadcrumbs a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--icon-orange), var(--blue));
+  transition: left 0.3s var(--ease-out-quart);
+}
+
+.breadcrumbs a:hover::after {
+  left: 0;
+}
+
+/* 加载动画优化 */
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.loading-skeleton {
+  background: linear-gradient(90deg, 
+    rgba(248, 187, 217, 0.1) 25%, 
+    rgba(248, 187, 217, 0.2) 50%, 
+    rgba(248, 187, 217, 0.1) 75%);
+  background-size: 200px 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(248, 187, 217, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--blue) 0%, var(--icon-orange) 100%);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--dark-blue) 0%, #e67038 100%);
+}
+
+/* 选中状态的现代化动画 */
+#listing .item[aria-selected="true"] {
+  animation: selectedPulse 0.4s var(--bounce);
+  transform: scale(1.02);
+}
+
+@keyframes selectedPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1.02); }
+}
+
+/* 响应式动画 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 焦点状态优化 */
+.button:focus-visible,
+nav .action:focus-visible,
+.breadcrumbs a:focus-visible {
+  outline: 2px solid var(--icon-orange);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(244, 119, 80, 0.2);
+}
+
+/* 微交互动画 */
+#listing .item i {
+  transition: all 0.3s var(--ease-out-quart);
+}
+
+#listing .item:hover i {
+  transform: scale(1.1) rotate(5deg);
+  color: var(--icon-orange);
+}
+
+/* 毛玻璃效果增强 */
+nav,
+.breadcrumbs {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* 现代化阴影系统 */
+.modern-shadow-1 {
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.24);
+}
+
+.modern-shadow-2 {
+  box-shadow: 
+    0 3px 6px rgba(0, 0, 0, 0.16),
+    0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+.modern-shadow-3 {
+  box-shadow: 
+    0 10px 20px rgba(0, 0, 0, 0.19),
+    0 6px 6px rgba(0, 0, 0, 0.23);
+}

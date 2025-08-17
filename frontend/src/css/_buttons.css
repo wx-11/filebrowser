@@ -1,18 +1,27 @@
 .button {
   outline: 0;
   border: 0;
-  padding: 0.5em 1em;
-  border-radius: 0.1em;
+  padding: 0.75em 1.5em;
+  border-radius: 0.75em;
   cursor: pointer;
-  background: var(--blue);
+  background: linear-gradient(135deg, var(--blue) 0%, var(--dark-blue) 100%);
   color: white;
-  border: 1px solid var(--divider);
-  box-shadow: 0 0 5px var(--divider);
-  transition: 0.1s ease all;
+  border: 1px solid transparent;
+  box-shadow: 
+    0 4px 12px rgba(248, 187, 217, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
 }
 
 .button:hover {
-  background-color: var(--dark-blue);
+  background: linear-gradient(135deg, var(--dark-blue) 0%, var(--blue) 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(248, 187, 217, 0.4),
+    0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .button--block {
@@ -26,7 +35,10 @@
 }
 
 .button--blue {
-  background: var(--icon-orange);
+  background: linear-gradient(135deg, var(--icon-orange) 0%, #e67038 100%);
+  box-shadow: 
+    0 4px 12px rgba(244, 119, 80, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .button--flat {
@@ -35,6 +47,8 @@
   box-shadow: 0 0 0;
   border: 0;
   text-transform: uppercase;
+  border-radius: 0.5em;
+  transition: all 0.2s ease;
 }
 
 .button--flat:hover {

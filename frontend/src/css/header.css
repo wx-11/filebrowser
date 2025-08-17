@@ -1,8 +1,10 @@
 header {
   z-index: 1000;
-  background: var(--surfacePrimary);
+  background: linear-gradient(135deg, var(--surfacePrimary) 0%, rgba(248, 187, 217, 0.02) 100%);
   border-bottom: 1px solid var(--divider);
-  box-shadow: 0 0 5px var(--borderPrimary);
+  box-shadow: 
+    0 2px 20px rgba(0, 0, 0, 0.08),
+    0 1px 4px rgba(0, 0, 0, 0.04);
   position: fixed;
   top: 0;
   left: 0;
@@ -12,6 +14,8 @@ header {
   display: flex;
   padding: 0.5em 0.5em 0.5em 1em;
   align-items: center;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
 }
 
 header > * {
@@ -25,6 +29,11 @@ header title {
   overflow: hidden;
   text-overflow: ellipsis;
   font-size: 1.2em;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--textSecondary) 0%, var(--icon-orange) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 header .overlay {
@@ -87,10 +96,11 @@ header .menu-button {
   display: flex;
   height: 100%;
   padding: 0em 0.75em;
-  border-radius: 0.3em;
-  transition: 0.1s ease all;
+  border-radius: 1.5em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   align-items: center;
   z-index: 2;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 #search #input input::placeholder {

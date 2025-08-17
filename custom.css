@@ -1,0 +1,292 @@
+/*
+ * FileBrowser 现代化主题 - Custom CSS
+ * 
+ * 使用方法:
+ * 1. 创建一个品牌文件夹，例如 /path/to/branding
+ * 2. 将此文件保存为 /path/to/branding/custom.css
+ * 3. 使用以下命令配置 FileBrowser:
+ *    filebrowser config set --branding.files "/path/to/branding"
+ * 
+ * 这个CSS文件提供了现代化的UI改进，包括:
+ * - 橙色/粉色主题配色
+ * - 现代化的卡片设计和阴影效果
+ * - 流畅的动画和过渡效果
+ * - 改进的按钮和交互设计
+ * - 毛玻璃效果和渐变背景
+ */
+
+/* 现代化颜色变量 */
+:root {
+  --modern-primary: #f47750;     /* 橙色主色 */
+  --modern-secondary: #f8bbd9;   /* 粉色辅助色 */
+  --modern-accent: #ec4899;      /* 深粉色强调色 */
+  --modern-gradient: linear-gradient(135deg, #f47750 0%, #f8bbd9 100%);
+  --modern-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --modern-shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 现代化按钮设计 */
+.button {
+  padding: 0.75em 1.5em !important;
+  border-radius: 0.75em !important;
+  background: var(--modern-gradient) !important;
+  box-shadow: var(--modern-shadow) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-weight: 500 !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--modern-shadow-hover) !important;
+}
+
+.button--blue {
+  background: linear-gradient(135deg, var(--modern-primary) 0%, #e67038 100%) !important;
+  box-shadow: 0 4px 12px rgba(244, 119, 80, 0.3), 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 现代化卡片设计 */
+#listing.mosaic .item {
+  padding: 1em !important;
+  border-radius: 1em !important;
+  box-shadow: var(--modern-shadow) !important;
+  backdrop-filter: blur(10px) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#listing.mosaic .item:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--modern-shadow-hover) !important;
+  background: linear-gradient(135deg, var(--surfacePrimary) 0%, rgba(248, 187, 217, 0.05) 100%) !important;
+}
+
+/* 现代化头部设计 */
+header {
+  background: linear-gradient(135deg, var(--surfacePrimary) 0%, rgba(248, 187, 217, 0.02) 100%) !important;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(0, 0, 0, 0.04) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+}
+
+header title {
+  font-weight: 600 !important;
+  background: linear-gradient(135deg, var(--textSecondary) 0%, var(--modern-primary) 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+}
+
+/* 现代化搜索框 */
+#search #input {
+  border-radius: 1.5em !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* 现代化侧边栏 */
+nav {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 0 1em 1em 0 !important;
+  margin: 0.5em 0 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+nav .action {
+  border-radius: 0.75em !important;
+  padding: 0.75em 1em !important;
+  margin: 0.25em 0.5em !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+nav .action:hover {
+  background: rgba(248, 187, 217, 0.1) !important;
+  transform: translateX(8px) scale(1.02) !important;
+  box-shadow: 0 4px 12px rgba(248, 187, 217, 0.2) !important;
+}
+
+/* 现代化面包屑导航 */
+.breadcrumbs {
+  height: 3.5em !important;
+  background: linear-gradient(135deg, var(--background) 0%, rgba(250, 250, 250, 0.95) 100%) !important;
+  backdrop-filter: blur(20px) !important;
+  border-radius: 0 0 1em 1em !important;
+  margin: 0 0.5em !important;
+}
+
+.breadcrumbs a {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border-radius: 0.5em !important;
+  padding: 0.25em 0.5em !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.breadcrumbs a::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 2px !important;
+  background: linear-gradient(90deg, var(--modern-primary), var(--modern-secondary)) !important;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.breadcrumbs a:hover::after {
+  left: 0 !important;
+}
+
+/* 现代化图标效果 */
+#listing .item i {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+#listing .item:hover i {
+  transform: scale(1.1) rotate(5deg) !important;
+  color: var(--modern-primary) !important;
+}
+
+/* 现代化滚动条 */
+::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(248, 187, 217, 0.1) !important;
+  border-radius: 4px !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--modern-gradient) !important;
+  border-radius: 4px !important;
+  transition: background 0.3s ease !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--modern-accent) 0%, #e67038 100%) !important;
+}
+
+/* 现代化选中状态 */
+#listing .item[aria-selected="true"] {
+  animation: selectedPulse 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+  transform: scale(1.02) !important;
+}
+
+@keyframes selectedPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1.02); }
+}
+
+/* 现代化进度条 */
+.vue-simple-progress-bar {
+  background: var(--modern-gradient) !important;
+  border-radius: 4px !important;
+}
+
+/* 现代化焦点状态 */
+.button:focus-visible,
+nav .action:focus-visible,
+.breadcrumbs a:focus-visible {
+  outline: 2px solid var(--modern-primary) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(244, 119, 80, 0.2) !important;
+}
+
+/* 现代化加载动画 */
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: calc(200px + 100%) 0; }
+}
+
+.loading-skeleton {
+  background: linear-gradient(90deg, 
+    rgba(248, 187, 217, 0.1) 25%, 
+    rgba(248, 187, 217, 0.2) 50%, 
+    rgba(248, 187, 217, 0.1) 75%) !important;
+  background-size: 200px 100% !important;
+  animation: shimmer 1.5s infinite linear !important;
+}
+
+/* 现代化入场动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#app {
+  animation: fadeInUp 0.6s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+/* 现代化毛玻璃效果 */
+nav,
+.breadcrumbs,
+header {
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+}
+
+/* 现代化阴影系统 */
+.modern-shadow-1 {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24) !important;
+}
+
+.modern-shadow-2 {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23) !important;
+}
+
+.modern-shadow-3 {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23) !important;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+  #listing.mosaic .item {
+    width: calc(50% - 1em) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #listing.mosaic .item {
+    width: calc(100% - 1em) !important;
+  }
+  
+  .button {
+    padding: 0.5em 1em !important;
+    font-size: 0.9em !important;
+  }
+}
+
+/* 减少动画对于偏好减少动画的用户 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --modern-gradient: linear-gradient(135deg, #f47750 0%, #d946ef 100%);
+  }
+  
+  header {
+    background: linear-gradient(135deg, rgb(32, 41, 47) 0%, rgba(248, 187, 217, 0.02) 100%) !important;
+  }
+  
+  nav {
+    background: linear-gradient(135deg, rgba(32, 41, 47, 0.1) 0%, rgba(32, 41, 47, 0.05) 100%) !important;
+  }
+}
