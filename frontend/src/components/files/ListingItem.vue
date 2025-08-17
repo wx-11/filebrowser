@@ -112,30 +112,25 @@ const isDraggable = computed(
   () => !props.readOnly && authStore.user?.perm.rename
 );
 
-// Track if size has been calculated (either locally or from backend during sort)
-const isSizeCalculated = computed(() => {
-  // Size is calculated if:
-  // 1. We calculated it locally (dirSizeValue is set)
-  // 2. Backend calculated it (sorting by size gives actual calculated sizes)
-  //    But we need to distinguish between uncalculated (4096) and calculated (including 0)
-  if (dirSizeValue.value !== null) {
-    return true;
-  }
-  // When sorting by size, backend calculates all sizes. 
-  // Default metadata size 4096 means uncalculated
-  if (props.isDir && props.size !== 4096 && props.size >= 0) {
-    return true;
-  }
-  return false;
+// Check if current view is sorted by size (which triggers auto-calculation)
+const isSortedBySize = computed(() => {
+  return fileStore.req?.sorting?.by === 'size';
 });
 
 // Display size: only show if explicitly calculated
 const displaySize = computed(() => {
-  if (!isSizeCalculated.value) {
-    return null;
+  // 1. If manually calculated locally, always show
+  if (dirSizeValue.value !== null) {
+    return dirSizeValue.value;
   }
-  // Return the calculated size (could be 0)
-  return dirSizeValue.value !== null ? dirSizeValue.value : props.size;
+  
+  // 2. If sorted by size, backend calculates all sizes - show them
+  if (props.isDir && isSortedBySize.value) {
+    return props.size;
+  }
+  
+  // 3. Otherwise, don't show any size (show "计算" button)
+  return null;
 });
 
 const canDrop = computed(() => {
