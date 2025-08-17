@@ -88,7 +88,7 @@ main .spinner .bounce2 {
   transition: 0.2s ease all;
   border: 0;
   margin: 0;
-  color: var(--blue);  /* 使用淡粉色 */
+  color: var(--action);  /* 恢复原始文字颜色 */
   border-radius: 50%;
   background: transparent;
   padding: 0;
@@ -107,6 +107,7 @@ main .spinner .bounce2 {
   padding: 0.4em;
   transition: 0.1s ease-in-out all;
   border-radius: 50%;
+  color: var(--blue);  /* 只有图标使用淡粉色 */
 }
 
 .action:hover {

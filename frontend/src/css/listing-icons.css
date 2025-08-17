@@ -243,7 +243,7 @@
 /* Overrides */
 
 .file-icons [data-dir="true"] i {
-  color: var(--icon-violet);  /* 使用紫色而不是深粉色 */
+  color: var(--blue);  /* 使用浅粉色 */
 }
 .file-icons [data-dir="true"] i::before {
   content: "folder";
