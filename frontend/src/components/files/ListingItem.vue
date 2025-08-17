@@ -504,7 +504,7 @@ const handleTouchMove = (event: TouchEvent) => {
   border-radius: 3px;
   font-size: 0.85em;
   font-weight: 500;
-  margin-left: -4px;  /* 往左移动4px对齐 */
+  margin-right: 4px;  /* 往右移动4px对齐 */
 }
 
 .calculate-link:hover {
@@ -529,7 +529,7 @@ const handleTouchMove = (event: TouchEvent) => {
 .size-value {
   cursor: pointer;
   transition: color 0.2s;
-  margin-left: -4px;  /* 保持与计算按钮对齐 */
+  /* 恢复原始位置，不需要margin */
 }
 
 .size-value:hover {
@@ -552,7 +552,7 @@ const handleTouchMove = (event: TouchEvent) => {
   align-items: center;
   color: var(--blue);
   font-weight: 500;
-  margin-left: -4px;  /* 保持与其他状态对齐 */
+  margin-right: 4px;  /* 与计算按钮对齐 */
 }
 
 .item[aria-selected="true"] .dir-size .calculating {
