@@ -12,7 +12,7 @@
 }
 
 .button:hover {
-  background-color: var(--iconPrimary);
+  background-color: var(--dark-blue);
 }
 
 .button--block {
@@ -26,11 +26,11 @@
 }
 
 .button--blue {
-  background: var(--iconPrimary);
+  background: var(--blue);
 }
 
 .button--flat {
-  color: var(--iconPrimary);
+  color: var(--dark-blue);
   background: transparent;
   box-shadow: 0 0 0;
   border: 0;

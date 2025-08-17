@@ -506,8 +506,8 @@ const handleTouchMove = (event: TouchEvent) => {
 }
 
 .calculate-link:hover {
-  background: var(--hover);
-  color: var(--iconPrimary);
+  background: rgba(192, 132, 252, 0.1);
+  color: var(--dark-blue);
 }
 
 /* When item is selected, inherit the text color (white on blue background) */

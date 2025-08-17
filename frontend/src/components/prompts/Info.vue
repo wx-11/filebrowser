@@ -271,7 +271,7 @@ export default {
 }
 
 .calculate-size-btn:hover {
-  background: var(--iconPrimary);
+  background: var(--dark-blue);
 }
 
 .calculating-size {

@@ -243,7 +243,7 @@
 /* Overrides */
 
 .file-icons [data-dir="true"] i {
-  color: var(--iconPrimary);
+  color: var(--icon-blue);
 }
 .file-icons [data-dir="true"] i::before {
   content: "folder";

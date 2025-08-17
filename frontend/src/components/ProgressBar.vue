@@ -70,7 +70,7 @@ export default {
     },
     "bar-color": {
       type: String,
-      default: "#000000", // black color for light theme
+      default: "#c084fc", // purple color for light theme
     },
     "bar-transition": {
       type: String,
@@ -177,10 +177,7 @@ export default {
       return style;
     },
     adaptiveBarColor() {
-      // If default color is used, get CSS variable value
-      if (this.barColor === "#000000") {
-        return getComputedStyle(document.documentElement).getPropertyValue('--iconPrimary').trim();
-      }
+      // If default color is used, return it directly
       return this.barColor;
     },
     bar_style() {

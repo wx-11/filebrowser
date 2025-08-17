@@ -1,6 +1,6 @@
 :root {
-  --blue: #000000;
-  --dark-blue: #000000;
+  --blue: #c084fc;
+  --dark-blue: #9333ea;
   --red: #f44336;
   --dark-red: #d32f2f;
   --moon-grey: #f2f2f2;
@@ -9,7 +9,7 @@
   --icon-orange: #f47750;
   --icon-yellow: #fdbc4b;
   --icon-green: #2ecc71;
-  --icon-blue: #000000;
+  --icon-blue: #c084fc;
   --icon-violet: #9b59b6;
 
   --input-red: rgb(252, 208, 205);
@@ -23,7 +23,7 @@
   --surfacePrimary: rgb(255, 255, 255);
   --surfaceSecondary: rgb(230, 230, 230);
   --divider: rgba(0, 0, 0, 0.05);
-  --iconPrimary: #000000;
+  --iconPrimary: var(--icon-blue);
   --iconSecondary: rgb(255, 255, 255);
   --iconTertiary: rgb(204, 204, 204);
   --textPrimary: rgb(111, 111, 111);
