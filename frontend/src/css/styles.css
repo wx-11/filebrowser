@@ -25,7 +25,7 @@
 } */
 
 .link {
-  color: #000000;
+  color: var(--iconPrimary);
 }
 
 #loading {

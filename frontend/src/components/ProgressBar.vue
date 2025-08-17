@@ -176,9 +176,16 @@ export default {
 
       return style;
     },
+    adaptiveBarColor() {
+      // If default color is used, get CSS variable value
+      if (this.barColor === "#000000") {
+        return getComputedStyle(document.documentElement).getPropertyValue('--iconPrimary').trim();
+      }
+      return this.barColor;
+    },
     bar_style() {
       const style = {
-        background: this.barColor,
+        background: this.adaptiveBarColor,
         width: this.pct + "%",
         height: this.size_px + "px",
         transition: this.barTransition,
