@@ -5,9 +5,17 @@
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
   --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --smooth-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
   --vibrant-pink: #e91e63;
   --vibrant-purple: #8e24aa;
   --vibrant-orange: #ff5722;
+  --rainbow-1: #ff6b6b;
+  --rainbow-2: #ffa726;
+  --rainbow-3: #ffeb3b;
+  --rainbow-4: #66bb6a;
+  --rainbow-5: #42a5f5;
+  --rainbow-6: #ab47bc;
 }
 
 /* 入场动画 - 减少位移 */
@@ -296,4 +304,178 @@ header > div:last-child .action:hover i {
   box-shadow: 
     0 10px 20px rgba(0, 0, 0, 0.19),
     0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+/* 彩虹色渐变动画 */
+@keyframes rainbow {
+  0% { background-position: 0% 50%; }
+  25% { background-position: 100% 50%; }
+  50% { background-position: 200% 50%; }
+  75% { background-position: 300% 50%; }
+  100% { background-position: 400% 50%; }
+}
+
+/* 右上角按钮彩虹色效果 */
+header .action:last-child i,
+header > div:last-child .action i,
+#more i {
+  background: linear-gradient(
+    45deg,
+    var(--rainbow-1) 0%,
+    var(--rainbow-2) 16.666%,
+    var(--rainbow-3) 33.333%,
+    var(--rainbow-4) 50%,
+    var(--rainbow-5) 66.666%,
+    var(--rainbow-6) 83.333%,
+    var(--rainbow-1) 100%
+  );
+  background-size: 400% 400%;
+  animation: rainbow 3s ease-in-out infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: bold;
+  filter: brightness(1.2) drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
+}
+
+/* 增强的悬浮效果 */
+.action:hover {
+  transform: translateY(-2px) scale(1.05);
+  transition: all 0.3s var(--spring);
+  box-shadow: 
+    0 8px 25px rgba(233, 30, 99, 0.2),
+    0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 流体动画效果 */
+@keyframes fluid {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg);
+    border-radius: 50% 60% 70% 30%;
+  }
+  25% { 
+    transform: translateY(-5px) rotate(5deg);
+    border-radius: 30% 60% 70% 40%;
+  }
+  50% { 
+    transform: translateY(-3px) rotate(-5deg);
+    border-radius: 70% 30% 60% 70%;
+  }
+  75% { 
+    transform: translateY(-8px) rotate(3deg);
+    border-radius: 40% 70% 60% 50%;
+  }
+}
+
+/* 页面元素流体动画 */
+nav .action::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, 
+    rgba(255, 179, 102, 0.05) 0%, 
+    rgba(233, 30, 99, 0.08) 50%, 
+    rgba(142, 36, 170, 0.05) 100%);
+  border-radius: 50%;
+  opacity: 0;
+  animation: fluid 6s ease-in-out infinite;
+  transition: opacity 0.3s var(--smooth-ease);
+  z-index: -1;
+}
+
+nav .action:hover::before {
+  opacity: 1;
+}
+
+/* 磁性吸附效果 */
+@keyframes magneticPull {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1.05); }
+}
+
+.button:hover,
+.action:hover {
+  animation: magneticPull 0.4s var(--spring);
+}
+
+/* 粒子效果背景 */
+@keyframes particles {
+  0% { 
+    transform: translateY(0px) rotate(0deg);
+    opacity: 1;
+  }
+  100% { 
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* 增强的毛玻璃效果 */
+nav,
+header,
+.breadcrumbs {
+  backdrop-filter: blur(25px) saturate(200%) brightness(1.1);
+  -webkit-backdrop-filter: blur(25px) saturate(200%) brightness(1.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* 平滑的滚动行为 */
+html {
+  scroll-behavior: smooth;
+}
+
+/* 优化的加载动画 */
+@keyframes elegantSpin {
+  0% { 
+    transform: rotate(0deg) scale(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: rotate(180deg) scale(1.1);
+    opacity: 0.8;
+  }
+  100% { 
+    transform: rotate(360deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.spinner > div {
+  animation: elegantSpin 1.2s ease-in-out infinite;
+}
+
+/* 交互式反馈动画 */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.button::after,
+.action::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+.button:focus::after,
+.action:focus::after {
+  animation: ripple 0.6s ease-out;
 }
