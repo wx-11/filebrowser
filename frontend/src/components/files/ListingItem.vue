@@ -506,7 +506,7 @@ const handleTouchMove = (event: TouchEvent) => {
 }
 
 .calculate-link:hover {
-  background: rgba(192, 132, 252, 0.1);
+  background: rgba(248, 187, 217, 0.1);
   color: var(--dark-blue);
 }
 
