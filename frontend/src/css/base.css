@@ -94,6 +94,10 @@ nav .action > * {
   vertical-align: middle;
 }
 
+nav .action i {
+  color: var(--blue);  /* 左侧导航图标使用淡粉色 */
+}
+
 main {
   min-height: 1em;
   margin: 0 1em 1em auto;

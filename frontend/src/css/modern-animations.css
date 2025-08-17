@@ -49,9 +49,9 @@
   animation: fadeInUp 0.4s ease-out;
 }
 
-/* 登录页面特殊处理 - 更平滑 */
+/* 登录页面 - 移除动画，保持默认居中 */
 #login form {
-  animation: scaleIn 0.3s ease-out !important;
+  /* 移除动画，使用默认居中 */
 }
 
 /* 侧边栏动画 - 简化延迟 */
@@ -72,20 +72,33 @@ nav .action:hover {
   box-shadow: 0 2px 8px rgba(233, 30, 99, 0.2);
 }
 
-/* 文件列表项动画 - 减少延迟 */
+/* 文件列表项动画 - 覆盖所有行 */
 #listing .item {
   animation: scaleIn 0.25s ease-out;
   animation-fill-mode: both;
 }
 
+/* 为更多文件行添加动画延迟 */
 #listing .item:nth-child(1) { animation-delay: 0.02s; }
 #listing .item:nth-child(2) { animation-delay: 0.04s; }
 #listing .item:nth-child(3) { animation-delay: 0.06s; }
 #listing .item:nth-child(4) { animation-delay: 0.08s; }
 #listing .item:nth-child(5) { animation-delay: 0.1s; }
 #listing .item:nth-child(6) { animation-delay: 0.12s; }
+#listing .item:nth-child(7) { animation-delay: 0.14s; }
+#listing .item:nth-child(8) { animation-delay: 0.16s; }
+#listing .item:nth-child(9) { animation-delay: 0.18s; }
+#listing .item:nth-child(10) { animation-delay: 0.2s; }
+#listing .item:nth-child(n+11) { animation-delay: 0.22s; }  /* 11行及以后统一延迟 */
 
-/* 悬浮效果 */
+/* 移除命令执行输入框的闪现 */
+.shell-prompt,
+.command-input,
+[data-testid="shell-prompt"] {
+  animation: none !important;
+}
+
+/* 优化悬浮效果 */
 #listing.mosaic .item::before {
   content: '';
   position: absolute;
@@ -93,15 +106,17 @@ nav .action:hover {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(233, 30, 99, 0.08) 0%, rgba(255, 87, 34, 0.08) 50%, rgba(142, 36, 170, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(255, 179, 102, 0.1) 0%, rgba(233, 30, 99, 0.08) 50%, rgba(147, 112, 219, 0.06) 100%);
   border-radius: inherit;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: -1;
+  transform: scale(0.95);
 }
 
 #listing.mosaic .item:hover::before {
   opacity: 1;
+  transform: scale(1);
 }
 
 /* 按钮波纹效果 */
@@ -221,9 +236,10 @@ nav .action:focus-visible,
 }
 
 #listing .item:hover i {
-  transform: scale(1.05);
+  transform: scale(1.08) rotate(3deg);
   color: var(--vibrant-orange);
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: brightness(1.1) drop-shadow(0 2px 6px rgba(255, 87, 34, 0.25));
 }
 
 /* 毛玻璃效果增强 */
@@ -231,6 +247,36 @@ nav,
 .breadcrumbs {
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* 美观的全局UI效果 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(233, 30, 99, 0.3) transparent;
+}
+
+/* 优雅的阴影过渡 */
+.button,
+nav .action,
+#listing .item {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button:hover,
+nav .action:hover,
+#listing .item:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* 彩虹色图标动画效果 */
+header > div:last-child .action i {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+header > div:last-child .action:hover i {
+  transform: scale(1.15) rotate(5deg);
+  filter: brightness(1.2) saturate(1.3);
 }
 
 /* 现代化阴影系统 */

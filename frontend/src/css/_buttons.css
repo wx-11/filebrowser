@@ -41,6 +41,11 @@
     0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.button--blue:active {
+  background: linear-gradient(135deg, #c8a2c8 0%, #dda0dd 100%);  /* 淡紫色浅紫色 */
+  transform: translateY(1px);
+}
+
 .button--flat {
   color: var(--blue);  /* 使用淡粉色 */
   background: transparent;

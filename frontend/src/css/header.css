@@ -51,6 +51,13 @@ header img {
   margin-right: 1em;
 }
 
+/* 右上角图标彩虹色配置 */
+header > div:last-child .action:nth-child(1) i { color: #ff6b6b; }  /* 红色 */
+header > div:last-child .action:nth-child(2) i { color: #ffa500; }  /* 橙色 */
+header > div:last-child .action:nth-child(3) i { color: #ffff00; }  /* 黄色 */
+header > div:last-child .action:nth-child(4) i { color: #9370db; }  /* 紫色 */
+header > div:last-child .action:nth-child(5) i { color: #ff69b4; }  /* 粉色 */
+
 header img {
   height: 2.5em;
 }
