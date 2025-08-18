@@ -17,6 +17,7 @@
 @import "./mobile.css";
 @import "./epubReader.css";
 @import "./mdPreview.css";
+@import "./modern-animations.css";
 
 /* For testing only
  :focus {
@@ -47,10 +48,11 @@ main .spinner > div {
   height: 0.8em;
   margin: 0 0.1em;
   font-size: 1em;
-  background: var(--iconPrimary);
+  background: linear-gradient(45deg, #ff8c42, #feca57);
   border-radius: 100%;
   display: inline-block;
-  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  animation: sk-bouncedelay 1.2s infinite ease-in-out both;
+  box-shadow: 0 2px 8px rgba(255, 140, 66, 0.3);
 }
 
 main .spinner .bounce1 {
