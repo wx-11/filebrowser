@@ -1,26 +1,46 @@
 /* 简化动画 - 只保留文件列表动画 */
 
-/* 基础动画变量 */
+/* 动画变量 */
 :root {
   --ease-out: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* 文件列表渐入动画 */
-@keyframes scaleIn {
+/* 文件列表优雅渐入动画 */
+@keyframes fadeInScale {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.96) translateY(8px);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) translateY(0);
   }
 }
 
 /* 文件列表项动画 */
 #listing .item {
-  animation: scaleIn 0.2s var(--ease-out);
+  animation: fadeInScale 0.3s var(--ease-out);
   animation-fill-mode: both;
+  transition: all 0.2s var(--ease-in-out);
+}
+
+/* 悬浮效果 */
+#listing .item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(255, 140, 66, 0.15);
+  background: rgba(255, 140, 66, 0.05);
+}
+
+/* 按钮悬浮动画 */
+.button, .action {
+  transition: all 0.3s var(--ease-in-out);
+}
+
+.button:hover, .action:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 140, 66, 0.2);
 }
 
 #listing .item:nth-child(1) { animation-delay: 0.02s; }
@@ -34,6 +54,40 @@
 #listing .item:nth-child(9) { animation-delay: 0.18s; }
 #listing .item:nth-child(10) { animation-delay: 0.2s; }
 #listing .item:nth-child(n+11) { animation-delay: 0.22s; }
+
+/* 优化加载动画 */
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% {
+    transform: scale(0.8) translateY(0);
+    opacity: 0.7;
+  }
+  40% {
+    transform: scale(1.1) translateY(-4px);
+    opacity: 1;
+    box-shadow: 0 6px 15px rgba(255, 140, 66, 0.4);
+  }
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 244, 230, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #ff8c42, #feca57);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #e07a36, #feb236);
+}
 
 /* 响应式动画 */
 @media (prefers-reduced-motion: reduce) {

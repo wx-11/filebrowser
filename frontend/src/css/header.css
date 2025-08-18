@@ -50,6 +50,17 @@ header .action span {
   display: none;
 }
 
+/* 右上角按钮鲜橙色配置 */
+header > div:last-child .action i {
+  color: #ff8c42 !important;
+  transition: all 0.3s ease;
+}
+
+header > div:last-child .action:hover i {
+  color: #e07a36 !important;
+  transform: scale(1.1);
+}
+
 header > div div {
   vertical-align: middle;
   position: relative;

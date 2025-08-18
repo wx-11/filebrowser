@@ -63,3 +63,15 @@
   font-size: 0.9rem;
   margin: 0.5rem 0;
 }
+
+/* 登录按钮鲜橙色配置 */
+#login .button {
+  background: #ff8c42 !important;
+  transition: all 0.3s ease;
+}
+
+#login .button:hover {
+  background: #e07a36 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
+}
