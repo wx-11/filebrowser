@@ -141,11 +141,6 @@ const fetchData = async () => {
   fileStore.multiple = false;
   layoutStore.closeHovers();
 
-  // Hide shell during loading to prevent flash
-  if (layoutStore.showShell) {
-    layoutStore.toggleShell();
-  }
-
   // Set loading to true and reset the error.
   layoutStore.loading = true;
   error.value = null;

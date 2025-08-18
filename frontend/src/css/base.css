@@ -56,11 +56,6 @@ nav {
   position: fixed;
   top: 4em;
   left: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-  backdrop-filter: blur(10px);
-  border-radius: 0 1em 1em 0;
-  margin: 0.5em 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 html[dir="rtl"] nav {
@@ -71,15 +66,12 @@ html[dir="rtl"] nav {
 nav .action {
   width: 100%;
   display: block;
-  border-radius: 0.75em;
+  border-radius: 0;
   font-size: 1.1em;
-  padding: 0.75em 1em;
+  padding: 0.5em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin: 0.25em 0.5em;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
 }
 
 html[dir="rtl"] nav .action {
@@ -94,10 +86,6 @@ nav .action > * {
   vertical-align: middle;
 }
 
-nav .action i {
-  color: var(--blue);  /* 左侧导航图标使用淡粉色 */
-}
-
 main {
   min-height: 1em;
   margin: 0 1em 1em auto;
@@ -105,15 +93,12 @@ main {
 }
 
 .breadcrumbs {
-  height: 3.5em;
-  background: linear-gradient(135deg, var(--background) 0%, rgba(250, 250, 250, 0.95) 100%);
+  height: 3em;
+  background: var(--background);
   border-bottom: 1px solid var(--divider);
   position: sticky;
   z-index: 1000;
   top: 4em;
-  backdrop-filter: blur(20px);
-  border-radius: 0 0 1em 1em;
-  margin: 0 0.5em;
 }
 
 .breadcrumbs span,
@@ -125,9 +110,8 @@ main {
 
 .breadcrumbs a {
   color: inherit;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 0.5em;
-  padding: 0.25em 0.5em;
+  transition: 0.1s ease-in;
+  border-radius: 0.125em;
 }
 
 html[dir="rtl"] .breadcrumbs a {

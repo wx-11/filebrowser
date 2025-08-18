@@ -70,7 +70,7 @@ export default {
     },
     "bar-color": {
       type: String,
-      default: "#f8bbd9", // pink color for light theme
+      default: "#c084fc", // purple color for light theme
     },
     "bar-transition": {
       type: String,
