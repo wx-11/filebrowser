@@ -48,10 +48,11 @@ main .spinner > div {
   height: 0.8em;
   margin: 0 0.1em;
   font-size: 1em;
-  background: var(--iconPrimary);
+  background: linear-gradient(135deg, var(--blue) 0%, var(--icon-violet) 100%);
   border-radius: 100%;
   display: inline-block;
-  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  animation: smoothBounce 1.2s infinite ease-in-out both;
+  box-shadow: 0 2px 8px rgba(142, 36, 170, 0.3);
 }
 
 main .spinner .bounce1 {
@@ -399,6 +400,29 @@ html[dir="rtl"] .breadcrumbs .chevron {
 @keyframes spin {
   100% {
     transform: rotate(360deg);
+  }
+}
+
+/* 优化的加载动画 */
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  40% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+@keyframes smoothBounce {
+  0%, 80%, 100% {
+    transform: scale(0.9) translateY(0);
+    opacity: 0.7;
+  }
+  40% {
+    transform: scale(1.1) translateY(-8px);
+    opacity: 1;
   }
 }
 
