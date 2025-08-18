@@ -104,10 +104,10 @@ jobs:
 
       - name: Set release variables
         run: |
-          echo "RELEASE_TAG=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
-          echo "RELEASE_NAME=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
-          echo "BUILD_DATE=$(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_ENV
-          echo "VERSION=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+          echo "RELEASE_TAG=$(TZ='Asia/Shanghai' date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+          echo "RELEASE_NAME=$(TZ='Asia/Shanghai' date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
+          echo "BUILD_DATE=$(TZ='Asia/Shanghai' date +'%Y-%m-%d %H:%M:%S CST')" >> $GITHUB_ENV
+          echo "VERSION=$(TZ='Asia/Shanghai' date +%Y%m%d-%H%M%S)" >> $GITHUB_ENV
 
       - name: Create release
         env:

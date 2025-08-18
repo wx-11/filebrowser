@@ -29,7 +29,7 @@
 
       <div v-if="recaptcha" id="recaptcha"></div>
       <input
-        class="button button--block button--blue"
+        class="button button--block"
         type="submit"
         :value="createMode ? t('login.signup') : t('login.submit')"
       />
