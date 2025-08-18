@@ -242,14 +242,8 @@
 
 /* Overrides */
 
-/* 普通文件夹 - 深鲜橙色 */
 .file-icons [data-dir="true"] i {
-  color: #e65100;  /* 深鲜橙色 */
-}
-
-/* 隐藏文件夹 - 浅粉色 */
-.file-icons [aria-label^="."][data-dir="true"] i {
-  color: #ffb6c1;  /* 浅粉色淡粉色 */
+  color: #8e24aa;  /* 紫色 */
 }
 .file-icons [data-dir="true"] i::before {
   content: "folder";

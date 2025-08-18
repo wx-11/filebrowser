@@ -104,10 +104,10 @@ jobs:
 
       - name: Set release variables
         run: |
-          echo "RELEASE_TAG=my-$(date +%Y%m%d)-${{ github.run_number }}" >> $GITHUB_ENV
-          echo "RELEASE_NAME=My Branch Build $(date +%Y-%m-%d)" >> $GITHUB_ENV
+          echo "RELEASE_TAG=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
+          echo "RELEASE_NAME=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
           echo "BUILD_DATE=$(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_ENV
-          echo "VERSION=my-$(date +%Y%m%d)-${GITHUB_SHA:0:7}" >> $GITHUB_ENV
+          echo "VERSION=$(date +%Y%m%d%H%M%S)" >> $GITHUB_ENV
 
       - name: Create release
         env:
@@ -148,7 +148,7 @@ jobs:
           tag_name: ${{ env.RELEASE_TAG }}
           name: ${{ env.RELEASE_NAME }}
           body: |
-            # File Browser My Branch - Automated Build
+            # File Browser - Automated Build
             
             ## ✨ Features in this build:
             - 🚀 **Performance Optimizations**: Enhanced WebSocket command execution
@@ -165,8 +165,8 @@ jobs:
             
             ### Docker
             ```bash
-            docker pull ${{ vars.DOCKER_USERNAME }}/filebrowser:my-latest
-            docker run -p 8080:8080 -v /data:/srv ${{ vars.DOCKER_USERNAME }}/filebrowser:my-latest
+            docker pull ${{ vars.DOCKER_USERNAME }}/filebrowser:latest
+            docker run -p 8080:8080 -v /data:/srv ${{ vars.DOCKER_USERNAME }}/filebrowser:latest
             ```
             
             ## 🔨 Build Information
@@ -222,8 +222,7 @@ jobs:
             --platform linux/amd64,linux/arm64 \
             --file Dockerfile.production \
             --tag ${{ vars.DOCKER_USERNAME }}/filebrowser:$VERSION \
-            --tag ${{ vars.DOCKER_USERNAME }}/filebrowser:my-latest \
-            --tag ${{ vars.DOCKER_USERNAME }}/filebrowser:my \
+            --tag ${{ vars.DOCKER_USERNAME }}/filebrowser:latest \
             --push .
 
   # Cleanup
@@ -235,4 +234,4 @@ jobs:
       - name: Cleanup
         run: |
           echo "Build and deployment completed"
-          echo "Docker images available at: ${{ vars.DOCKER_USERNAME }}/filebrowser:my-latest"
+          echo "Docker images available at: ${{ vars.DOCKER_USERNAME }}/filebrowser:latest"

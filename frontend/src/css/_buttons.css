@@ -53,7 +53,7 @@
 }
 
 .button--blue:active {
-  background: linear-gradient(135deg, #e6e6fa 0%, #f0f0f0 100%);  /* 淡灰色浅色 */
+  background: linear-gradient(135deg, #c8a2c8 0%, #dda0dd 100%);  /* 淡紫色浅紫色 */
   transform: translateY(1px);
 }
 
