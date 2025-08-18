@@ -50,35 +50,6 @@ header .action span {
   display: none;
 }
 
-/* 右上角按钮彩色配置 */
-header > div:last-child .action:nth-child(1) i {
-  color: #ff6b6b !important; /* 红色 */
-}
-
-header > div:last-child .action:nth-child(2) i {
-  color: #feca57 !important; /* 黄色 */
-}
-
-header > div:last-child .action:nth-child(3) i {
-  color: #48cae4 !important; /* 蓝色 */
-}
-
-header > div:last-child .action:nth-child(4) i {
-  color: #54a0ff !important; /* 深蓝色 */
-}
-
-header > div:last-child .action:nth-child(5) i {
-  color: #5f27cd !important; /* 紫色 */
-}
-
-header > div:last-child .action:nth-child(6) i {
-  color: #00d2d3 !important; /* 青色 */
-}
-
-header > div:last-child .action:hover {
-  background-color: rgba(255, 140, 66, 0.1) !important;
-}
-
 header > div div {
   vertical-align: middle;
   position: relative;
