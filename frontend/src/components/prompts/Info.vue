@@ -267,9 +267,9 @@ export default {
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.85em;
-  margin-left: 0;
-  display: block;
-  margin-top: 4px;
+  margin-left: -6px;
+  display: inline-block;
+  margin-top: 2px;
 }
 
 .calculate-size-btn:hover {

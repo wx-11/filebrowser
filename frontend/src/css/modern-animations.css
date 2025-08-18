@@ -57,9 +57,16 @@
   animation: fadeInUp 0.4s ease-out;
 }
 
-/* 登录页面 - 移除动画，保持默认居中 */
+/* 登录页面 - 完全移除动画，静态显示 */
+#login,
+#login form,
+#login * {
+  animation: none !important;
+  transition: none !important;
+}
+
 #login form {
-  /* 移除动画，使用默认居中 */
+  /* 保持静态居中，无动画 */
 }
 
 /* 侧边栏动画 - 简化延迟 */
@@ -267,14 +274,22 @@ nav,
 .button,
 nav .action,
 #listing .item {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 2px 12px rgba(233, 30, 99, 0.08),
+    0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: 
+    box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .button:hover,
 nav .action:hover,
 #listing .item:hover {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 
+    0 12px 32px rgba(233, 30, 99, 0.15),
+    0 8px 16px rgba(0, 0, 0, 0.08),
+    0 4px 8px rgba(255, 87, 34, 0.1);
+  transform: translateY(-2px);
 }
 
 /* 彩虹色图标动画效果 */

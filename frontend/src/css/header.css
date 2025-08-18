@@ -56,39 +56,49 @@ header img {
   margin-right: 1em;
 }
 
-/* 右上角按钮彩虹色效果 */
-header .action i,
-header > div:last-child .action i,
-#dropdown .action i,
-#more i {
-  background: linear-gradient(
-    45deg,
-    #ff6b6b 0%,      /* 红色 */
-    #ffa726 14.28%,   /* 橙色 */
-    #ffeb3b 28.57%,   /* 黄色 */
-    #66bb6a 42.86%,   /* 绿色 */
-    #42a5f5 57.14%,   /* 蓝色 */
-    #ab47bc 71.43%,   /* 紫色 */
-    #ff6b6b 85.71%,   /* 回到红色 */
-    #ffa726 100%      /* 橙色 */
-  );
-  background-size: 400% 400%;
-  animation: rainbow 2.5s ease-in-out infinite;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 600;
-  filter: brightness(1.3) drop-shadow(0 0 6px rgba(255, 255, 255, 0.4));
-  transition: all 0.3s ease;
+/* 右上角按钮彩虹色效果 - 每个图标固定颜色 */
+header .action:nth-child(1) i,
+header > div:last-child .action:nth-child(1) i { 
+  color: #ff6b6b !important; /* 红色 */
+  filter: brightness(1.3) drop-shadow(0 0 6px rgba(255, 107, 107, 0.4));
 }
 
+header .action:nth-child(2) i,
+header > div:last-child .action:nth-child(2) i { 
+  color: #ffa726 !important; /* 橙色 */
+  filter: brightness(1.3) drop-shadow(0 0 6px rgba(255, 167, 38, 0.4));
+}
+
+header .action:nth-child(3) i,
+header > div:last-child .action:nth-child(3) i { 
+  color: #ffeb3b !important; /* 黄色 */
+  filter: brightness(1.3) drop-shadow(0 0 6px rgba(255, 235, 59, 0.4));
+}
+
+header .action:nth-child(4) i,
+header > div:last-child .action:nth-child(4) i { 
+  color: #66bb6a !important; /* 绿色 */
+  filter: brightness(1.3) drop-shadow(0 0 6px rgba(102, 187, 106, 0.4));
+}
+
+header .action:nth-child(5) i,
+header > div:last-child .action:nth-child(5) i { 
+  color: #42a5f5 !important; /* 蓝色 */
+  filter: brightness(1.3) drop-shadow(0 0 6px rgba(66, 165, 245, 0.4));
+}
+
+#more i {
+  color: #ab47bc !important; /* 紫色 */
+  filter: brightness(1.3) drop-shadow(0 0 6px rgba(171, 71, 188, 0.4));
+}
+
+/* 悬浮增强效果 */
 header .action:hover i,
 header > div:last-child .action:hover i,
-#dropdown .action:hover i,
 #more:hover i {
-  animation-duration: 1s;
-  filter: brightness(1.5) drop-shadow(0 0 12px rgba(255, 255, 255, 0.6));
+  filter: brightness(1.5) drop-shadow(0 0 12px currentColor);
   transform: scale(1.1);
+  transition: all 0.3s ease;
 }
 
 header img {
