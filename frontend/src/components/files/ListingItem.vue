@@ -1,6 +1,7 @@
 <template>
   <div
     class="item"
+    :class="{ 'hidden-file': name.startsWith('.') }"
     role="button"
     tabindex="0"
     :draggable="isDraggable"
@@ -587,5 +588,19 @@ const handleTouchMove = (event: TouchEvent) => {
     transform: translateY(-3px);
     opacity: 0.7;
   }
+}
+
+/* Hidden files (starting with .) appear with reduced opacity */
+.hidden-file {
+  opacity: 0.6;
+}
+
+.hidden-file:hover {
+  opacity: 0.8;
+}
+
+/* When selected, hidden files show full opacity */
+.hidden-file.item[aria-selected="true"] {
+  opacity: 1;
 }
 </style>
