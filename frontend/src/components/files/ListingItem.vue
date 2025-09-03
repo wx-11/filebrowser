@@ -591,16 +591,16 @@ const handleTouchMove = (event: TouchEvent) => {
 }
 
 /* Hidden files (starting with .) appear with reduced opacity */
-.hidden-file {
-  opacity: 0.6;
+.item.hidden-file {
+  opacity: 0.6 !important;
 }
 
-.hidden-file:hover {
-  opacity: 0.8;
+.item.hidden-file:hover {
+  opacity: 0.8 !important;
 }
 
 /* When selected, hidden files show full opacity */
-.hidden-file.item[aria-selected="true"] {
-  opacity: 1;
+.item.hidden-file[aria-selected="true"] {
+  opacity: 1 !important;
 }
 </style>
