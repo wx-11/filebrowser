@@ -36,6 +36,7 @@ type Settings struct {
 	DirMode               fs.FileMode         `json:"dirMode"`
 	MimeTypes             map[string]string   `json:"mimeTypes"`     // Custom MIME types for extensions
 	FilenameMimeTypes     map[string]string   `json:"filenameMimes"` // Custom MIME types for specific filenames
+	HideDotfiles          bool                `json:"hideDotfiles"`
 }
 
 // GetRules implements rules.Provider.

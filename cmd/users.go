@@ -81,6 +81,8 @@ func addUserFlags(flags *pflag.FlagSet) {
 	flags.Bool("singleClick", false, "use single clicks only")
 	flags.Bool("dateFormat", false, "use date format (true for absolute time, false for relative)")
 	flags.Bool("hideDotfiles", false, "hide dotfiles")
+	flags.String("aceEditorTheme", "", "ace editor's syntax highlighting theme for users")
+	flags.Bool("hide-dotfiles", false, "Hide dotfiles by default")
 }
 
 func getViewMode(flags *pflag.FlagSet) (users.ViewMode, error) {
@@ -112,6 +114,8 @@ func getUserDefaults(flags *pflag.FlagSet, defaults *settings.UserDefaults, all 
 			defaults.ViewMode, err = getViewMode(flags)
 		case "singleClick":
 			defaults.SingleClick, err = getBool(flags, flag.Name)
+		case "aceEditorTheme":
+			defaults.AceEditorTheme, err = getString(flags, flag.Name)
 		case "perm.admin":
 			defaults.Perm.Admin, err = getBool(flags, flag.Name)
 		case "perm.execute":
@@ -137,6 +141,8 @@ func getUserDefaults(flags *pflag.FlagSet, defaults *settings.UserDefaults, all 
 		case "dateFormat":
 			defaults.DateFormat, err = getBool(flags, flag.Name)
 		case "hideDotfiles":
+			defaults.HideDotfiles, err = getBool(flags, flag.Name)
+		case "hide-dotfiles":
 			defaults.HideDotfiles, err = getBool(flags, flag.Name)
 		}
 		if err != nil {

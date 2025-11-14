@@ -4,6 +4,7 @@ import type { JwtPayload } from "jwt-decode";
 import { jwtDecode } from "jwt-decode";
 import { baseURL, noAuth } from "./constants";
 import { StatusError } from "@/api/utils";
+import { setSafeTimeout } from "@/api/utils";
 
 export function parseToken(token: string) {
   // falsy or malformed jwt will throw InvalidTokenError
@@ -16,6 +17,18 @@ export function parseToken(token: string) {
   const authStore = useAuthStore();
   authStore.jwt = token;
   authStore.setUser(data.user);
+
+  if (authStore.logoutTimer) {
+    clearTimeout(authStore.logoutTimer);
+  }
+
+  const expiresAt = new Date(data.exp! * 1000);
+  const timeout = expiresAt.getTime() - Date.now();
+  authStore.setLogoutTimer(
+    setSafeTimeout(() => {
+      logout("inactivity");
+    }, timeout)
+  );
 }
 
 export async function validateLogin() {
@@ -92,7 +105,7 @@ export async function signup(username: string, password: string) {
   }
 }
 
-export function logout() {
+export function logout(reason?: string) {
   document.cookie = "auth=; Max-Age=0; Path=/; SameSite=Strict;";
 
   const authStore = useAuthStore();
@@ -107,6 +120,14 @@ export function logout() {
     // Save current path for redirect after login
     const currentPath = router.currentRoute.value.fullPath;
     const redirectPath = currentPath !== "/login" ? currentPath : "/files/";
-    router.push({ path: "/login", query: { redirect: redirectPath } });
+
+    const query: Record<string, string> = { redirect: redirectPath };
+
+    // Add logout reason if provided
+    if (typeof reason === "string" && reason.trim() !== "") {
+      query["logout-reason"] = reason;
+    }
+
+    router.push({ path: "/login", query });
   }
 }

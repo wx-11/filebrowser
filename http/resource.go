@@ -15,7 +15,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/shirou/gopsutil/v3/disk"
+	"github.com/shirou/gopsutil/v4/disk"
 	"github.com/spf13/afero"
 
 	fbErrors "github.com/filebrowser/filebrowser/v2/errors"

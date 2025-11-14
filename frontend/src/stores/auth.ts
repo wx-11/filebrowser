@@ -7,9 +7,11 @@ export const useAuthStore = defineStore("auth", {
   state: (): {
     user: IUser | null;
     jwt: string;
+    logoutTimer: number | null;
   } => ({
     user: null,
     jwt: "",
+    logoutTimer: null,
   }),
   getters: {
     // user and jwt getter removed, no longer needed
@@ -51,6 +53,9 @@ export const useAuthStore = defineStore("auth", {
       this.$reset();
       // Also clear JWT to ensure clean state
       this.jwt = "";
+    },
+    setLogoutTimer(logoutTimer: number | null) {
+      this.logoutTimer = logoutTimer;
     },
   },
 });
